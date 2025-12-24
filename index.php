@@ -857,13 +857,6 @@ $stickerGroupsJson = json_encode($stickerGroups, JSON_UNESCAPED_UNICODE); // ス
         }
 
         // (Other existing render functions omitted for brevity but logic remains same as original file)
-        function getStickerGroupGridClass(count) {
-            if (count >= 1 && count <= 4) {
-                return `grid grid-cols-2 md:grid-cols-${count} gap-4 md:gap-6`;
-            }
-            return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6';
-        }
-
         function renderGallery(category = 'all') {
             const categories = [
                 { id: 'illustration', name: 'イラスト', icon: 'fa-palette', color: 'pop-blue' },
@@ -976,14 +969,6 @@ $stickerGroupsJson = json_encode($stickerGroups, JSON_UNESCAPED_UNICODE); // ス
                     `;
                 }).join('');
                 
-                const worksSection = worksHtml
-                    ? `<div class="${gridClass}">${worksHtml}</div>`
-                    : '';
-                const stickerGridClass = getStickerGroupGridClass(categoryGroups.length);
-                const stickerSection = stickerGroupsHtml
-                    ? `<div class="${stickerGridClass}${worksHtml ? ' mt-6' : ''}">${stickerGroupsHtml}</div>`
-                    : '';
-
                 container.innerHTML = `
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-3">
@@ -994,8 +979,7 @@ $stickerGroupsJson = json_encode($stickerGroups, JSON_UNESCAPED_UNICODE); // ス
                             <span class="text-sm text-gray-400 font-normal">(${filtered.length + categoryGroups.length})</span>
                         </div>
                     </div>
-                    ${worksSection}
-                    ${stickerSection}
+                    <div class="${gridClass}">${worksHtml}${stickerGroupsHtml}</div>
                 `;
             });
         }
