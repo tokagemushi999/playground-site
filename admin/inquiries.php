@@ -10,6 +10,38 @@ requireAuth();
 $db = getDB();
 $message = '';
 
+// 一括操作
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
+    $selectedIds = $_POST['selected_ids'] ?? [];
+    $action = $_POST['bulk_action'];
+    $ids = array_values(array_filter($selectedIds, 'is_numeric'));
+
+    if ($action === '') {
+        $message = '操作を選択してください。';
+    } elseif (empty($ids)) {
+        $message = '問い合わせを選択してください。';
+    } else {
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        if ($action === 'archive') {
+            $stmt = $db->prepare("UPDATE inquiries SET is_archived = 1 WHERE id IN ($placeholders)");
+            $stmt->execute($ids);
+            $message = $stmt->rowCount() . '件をアーカイブしました。';
+        } elseif ($action === 'unarchive') {
+            $stmt = $db->prepare("UPDATE inquiries SET is_archived = 0 WHERE id IN ($placeholders)");
+            $stmt->execute($ids);
+            $message = $stmt->rowCount() . '件のアーカイブを解除しました。';
+        } elseif ($action === 'delete') {
+            $stmt = $db->prepare("DELETE FROM inquiries WHERE id IN ($placeholders) AND is_archived = 1");
+            $stmt->execute($ids);
+            if ($stmt->rowCount() > 0) {
+                $message = $stmt->rowCount() . '件を完全に削除しました。';
+            } else {
+                $message = '削除できませんでした。アーカイブ済みの問い合わせを選択してください。';
+            }
+        }
+    }
+}
+
 // アーカイブ処理
 if (isset($_GET['archive']) && is_numeric($_GET['archive'])) {
     $stmt = $db->prepare("UPDATE inquiries SET is_archived = 1 WHERE id = ?");
@@ -147,33 +179,61 @@ $stats = [
                 <p><?= $showArchived ? 'アーカイブされた問い合わせがありません' : '問い合わせがありません' ?></p>
             </div>
             <?php else: ?>
+            <form id="bulk-action-form" method="POST" class="border-b border-gray-100 px-6 py-4 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+                <div class="flex items-center gap-3">
+                    <label class="inline-flex items-center gap-2 text-sm text-gray-600">
+                        <input type="checkbox" id="select-all" class="rounded border-gray-300 text-yellow-500 focus:ring-yellow-400">
+                        <span>全て選択</span>
+                    </label>
+                    <span class="text-xs text-gray-400">選択した問い合わせに対して操作できます</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select name="bulk_action" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none">
+                        <option value="">操作を選択</option>
+                        <?php if ($showArchived): ?>
+                        <option value="unarchive">アーカイブ解除</option>
+                        <option value="delete">完全削除</option>
+                        <?php else: ?>
+                        <option value="archive">アーカイブ</option>
+                        <?php endif; ?>
+                    </select>
+                    <button type="submit" class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+                        一括実行
+                    </button>
+                </div>
+            </form>
             <div class="divide-y divide-gray-100">
                 <?php foreach ($inquiries as $inquiry): ?>
                 <div class="p-6 <?= $showArchived ? 'bg-gray-50' : '' ?>">
                     <div class="flex flex-col md:flex-row justify-between items-start mb-4 gap-4">
-                        <div>
-                            <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold 
-                                    <?= $inquiry['status'] === 'new' ? 'bg-red-100 text-red-600' : 
-                                       ($inquiry['status'] === 'in_progress' ? 'bg-yellow-100 text-yellow-600' : 'bg-green-100 text-green-600') ?>">
-                                    <i class="fas <?= $inquiry['status'] === 'new' ? 'fa-exclamation-circle' : 
-                                       ($inquiry['status'] === 'in_progress' ? 'fa-clock' : 'fa-check-circle') ?>"></i>
-                                    <?= $inquiry['status'] === 'new' ? '新規' : 
-                                       ($inquiry['status'] === 'in_progress' ? '対応中' : '完了') ?>
-                                </span>
-                                <?php if ($showArchived): ?>
-                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600">
-                                    <i class="fas fa-archive"></i> アーカイブ済
-                                </span>
-                                <?php endif; ?>
-                                <span class="text-gray-400 text-sm"><?= date('Y/m/d H:i', strtotime($inquiry['created_at'])) ?></span>
+                        <div class="flex gap-3">
+                            <div class="pt-1">
+                                <input type="checkbox" name="selected_ids[]" value="<?= $inquiry['id'] ?>" form="bulk-action-form" class="inquiry-checkbox rounded border-gray-300 text-yellow-500 focus:ring-yellow-400">
                             </div>
-                            <div>
-                                <h4 class="font-bold text-gray-800 text-lg"><?= htmlspecialchars($inquiry['name'] ?: '名前なし') ?></h4>
-                                <?php if (!empty($inquiry['company_name'])): ?>
-                                <p class="text-gray-600 text-sm font-medium"><?= htmlspecialchars($inquiry['company_name']) ?></p>
-                                <?php endif; ?>
-                                <p class="text-gray-500 text-sm"><?= htmlspecialchars($inquiry['email'] ?: '-') ?></p>
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold 
+                                        <?= $inquiry['status'] === 'new' ? 'bg-red-100 text-red-600' : 
+                                           ($inquiry['status'] === 'in_progress' ? 'bg-yellow-100 text-yellow-600' : 'bg-green-100 text-green-600') ?>">
+                                        <i class="fas <?= $inquiry['status'] === 'new' ? 'fa-exclamation-circle' : 
+                                           ($inquiry['status'] === 'in_progress' ? 'fa-clock' : 'fa-check-circle') ?>"></i>
+                                        <?= $inquiry['status'] === 'new' ? '新規' : 
+                                           ($inquiry['status'] === 'in_progress' ? '対応中' : '完了') ?>
+                                    </span>
+                                    <?php if ($showArchived): ?>
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600">
+                                        <i class="fas fa-archive"></i> アーカイブ済
+                                    </span>
+                                    <?php endif; ?>
+                                    <span class="text-gray-400 text-sm"><?= date('Y/m/d H:i', strtotime($inquiry['created_at'])) ?></span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-lg"><?= htmlspecialchars($inquiry['name'] ?: '名前なし') ?></h4>
+                                    <?php if (!empty($inquiry['company_name'])): ?>
+                                    <p class="text-gray-600 text-sm font-medium"><?= htmlspecialchars($inquiry['company_name']) ?></p>
+                                    <?php endif; ?>
+                                    <p class="text-gray-500 text-sm"><?= htmlspecialchars($inquiry['email'] ?: '-') ?></p>
+                                </div>
                             </div>
                         </div>
                         <div class="text-right">
@@ -261,5 +321,29 @@ $stats = [
             <?php endif; ?>
         </div>
     </main>
+    <script>
+        const selectAll = document.getElementById('select-all');
+        const inquiryCheckboxes = document.querySelectorAll('.inquiry-checkbox');
+
+        if (selectAll) {
+            selectAll.addEventListener('change', () => {
+                inquiryCheckboxes.forEach((checkbox) => {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+        }
+
+        inquiryCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', () => {
+                if (!selectAll) {
+                    return;
+                }
+                const allChecked = Array.from(inquiryCheckboxes).every((item) => item.checked);
+                const anyChecked = Array.from(inquiryCheckboxes).some((item) => item.checked);
+                selectAll.checked = allChecked;
+                selectAll.indeterminate = !allChecked && anyChecked;
+            });
+        });
+    </script>
 </body>
 </html>
