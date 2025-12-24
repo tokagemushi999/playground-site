@@ -45,7 +45,15 @@ if (isset($_POST['save'])) {
         $category = $_POST['category'] ?? 'illustration';
         $representative_work_id = $_POST['representative_work_id'] ?: null;
         $representative_side = $_POST['representative_side'] ?? 'front';
-        $sort_order = (int)($_POST['sort_order'] ?? 0);
+        if (isset($_POST['sort_order'])) {
+            $sort_order = (int)$_POST['sort_order'];
+        } elseif ($id) {
+            $stmt = $db->prepare("SELECT sort_order FROM sticker_groups WHERE id = ?");
+            $stmt->execute([$id]);
+            $sort_order = (int)$stmt->fetchColumn();
+        } else {
+            $sort_order = 0;
+        }
         
         if ($id) {
             $stmt = $db->prepare("UPDATE sticker_groups SET title = ?, description = ?, creator_id = ?, category = ?, representative_work_id = ?, representative_side = ?, sort_order = ? WHERE id = ?");
@@ -187,11 +195,6 @@ if ($editGroup) {
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">表示順</label>
-                        <input type="number" name="sort_order" value="<?= $editGroup['sort_order'] ?? 0 ?>"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-                    </div>
                 </div>
 
                 <?php if ($editGroup): ?>
