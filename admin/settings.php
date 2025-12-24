@@ -140,18 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // adminの一つ上の階層（サイトルート）に manifest.json を書き出し
         // ※権限エラーが出る場合はディレクトリのパーミッションを確認してください
         file_put_contents('../manifest.json', json_encode($manifestData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-
-        // バックヤード（管理画面）用のmanifestも生成
-        $adminManifest = [
-            "name" => $settings['site_name'] . " バックヤード",
-            "short_name" => "バックヤード",
-            "start_url" => "/admin/login.php",
-            "display" => "standalone",
-            "background_color" => "#ffffff",
-            "theme_color" => $settings['pwa_theme_color'],
-            "icons" => $manifestData['icons'],
-        ];
-        file_put_contents('../admin/manifest.json', json_encode($adminManifest, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
         
         $message = '設定を保存し、manifest.jsonを更新しました';
 
@@ -205,7 +193,6 @@ $settings = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>サイト設定 | 管理画面</title>
-    <?php include 'includes/site-head.php'; ?>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
