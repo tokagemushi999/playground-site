@@ -4,6 +4,7 @@
  */
 
 require_once 'includes/db.php';
+require_once 'includes/site-settings.php';
 
 $db = getDB();
 $creator = null;
@@ -134,13 +135,13 @@ $typeLabels = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="manifest" href="/manifest.json">
-<title><?= htmlspecialchars($creator['name']) ?> | ぷれぐら！PLAYGROUND</title>
+    <link rel="manifest" href="/manifest.json">
+    <title><?= htmlspecialchars($creator['name']) ?> | ぷれぐら！PLAYGROUND</title>
     <meta name="description" content="<?= htmlspecialchars($creator['bio'] ?? '') ?>">
     
-    <!-- Favicon設定を追加 -->
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/favicon.png">
+    <?php $faviconInfo = getFaviconInfo($db); ?>
+    <link rel="icon" href="<?= htmlspecialchars($faviconInfo['path']) ?>" type="<?= htmlspecialchars($faviconInfo['type']) ?>">
+    <link rel="apple-touch-icon" href="<?= htmlspecialchars($faviconInfo['path']) ?>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
