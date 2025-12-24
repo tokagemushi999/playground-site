@@ -446,8 +446,11 @@ $search = trim($_GET['q'] ?? '');
 $searchSql = '';
 $searchParams = [];
 if ($search !== '') {
-    $searchSql = " AND (w.title LIKE :search OR w.tags LIKE :search OR w.category LIKE :search OR c.name LIKE :search)";
-    $searchParams[':search'] = '%' . $search . '%';
+    $searchSql = " AND (w.title LIKE :search_title OR w.tags LIKE :search_tags OR w.category LIKE :search_category OR c.name LIKE :search_creator)";
+    $searchParams[':search_title'] = '%' . $search . '%';
+    $searchParams[':search_tags'] = '%' . $search . '%';
+    $searchParams[':search_category'] = '%' . $search . '%';
+    $searchParams[':search_creator'] = '%' . $search . '%';
 }
 if ($showArchived) {
     $stmt = $db->prepare("SELECT w.*, c.name as creator_name FROM works w LEFT JOIN creators c ON w.creator_id = c.id WHERE w.is_active = 0{$searchSql} ORDER BY w.id DESC");
