@@ -48,7 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $show_articles = 1;
     $custom_css = '';
     
-    $sort_order = (int)($_POST['sort_order'] ?? 0);
+    if (isset($_POST['sort_order'])) {
+        $sort_order = (int)$_POST['sort_order'];
+    } elseif ($id) {
+        $stmt = $db->prepare("SELECT sort_order FROM creators WHERE id = ?");
+        $stmt->execute([$id]);
+        $sort_order = (int)$stmt->fetchColumn();
+    } else {
+        $sort_order = 0;
+    }
     
     // プロフィール画像アップロード（WebP変換）
     $image = $_POST['current_image'] ?? '';
@@ -308,12 +316,6 @@ $creators = $db->query("SELECT * FROM creators WHERE is_active = 1 ORDER BY sort
                                     placeholder="個別ページに表示される詳しい自己紹介"><?= htmlspecialchars($editCreator['bio_long'] ?? '') ?></textarea>
                             </div>
                             
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">表示順</label>
-                                <input type="number" name="sort_order"
-                                    value="<?= htmlspecialchars($editCreator['sort_order'] ?? 0) ?>"
-                                    class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-                            </div>
                         </div>
                         
                         <!-- SNSタブ -->

@@ -133,7 +133,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $is_omake_sticker = isset($_POST['is_omake_sticker']) ? 1 : 0;
     $sticker_group_id = $_POST['sticker_group_id'] ?: null;
     $sticker_order = (int)($_POST['sticker_order'] ?? 0);
-    $sort_order = (int)($_POST['sort_order'] ?? 0);
+    if (isset($_POST['sort_order'])) {
+        $sort_order = (int)$_POST['sort_order'];
+    } elseif ($id) {
+        $stmt = $db->prepare("SELECT sort_order FROM works WHERE id = ?");
+        $stmt->execute([$id]);
+        $sort_order = (int)$stmt->fetchColumn();
+    } else {
+        $sort_order = 0;
+    }
     $youtube_url = $_POST['youtube_url'] ?? '';
     $thumbnail_type = $_POST['thumbnail_type'] ?? 'image';
     $is_manga = isset($_POST['is_manga']) ? 1 : 0;
@@ -434,11 +442,20 @@ function extractYoutubeId($url) {
 
 // データ取得
 $showArchived = isset($_GET['archived']);
-if ($showArchived) {
-    $works = $db->query("SELECT w.*, c.name as creator_name FROM works w LEFT JOIN creators c ON w.creator_id = c.id WHERE w.is_active = 0 ORDER BY w.id DESC")->fetchAll();
-} else {
-    $works = $db->query("SELECT w.*, c.name as creator_name FROM works w LEFT JOIN creators c ON w.creator_id = c.id WHERE w.is_active = 1 ORDER BY w.sort_order DESC, w.id DESC")->fetchAll();
+$search = trim($_GET['q'] ?? '');
+$searchSql = '';
+$searchParams = [];
+if ($search !== '') {
+    $searchSql = " AND (w.title LIKE :search OR w.tags LIKE :search OR w.category LIKE :search OR c.name LIKE :search)";
+    $searchParams[':search'] = '%' . $search . '%';
 }
+if ($showArchived) {
+    $stmt = $db->prepare("SELECT w.*, c.name as creator_name FROM works w LEFT JOIN creators c ON w.creator_id = c.id WHERE w.is_active = 0{$searchSql} ORDER BY w.id DESC");
+} else {
+    $stmt = $db->prepare("SELECT w.*, c.name as creator_name FROM works w LEFT JOIN creators c ON w.creator_id = c.id WHERE w.is_active = 1{$searchSql} ORDER BY w.sort_order DESC, w.id DESC");
+}
+$stmt->execute($searchParams);
+$works = $stmt->fetchAll();
 
 $creators = $db->query("SELECT id, name, image FROM creators WHERE is_active = 1 ORDER BY name")->fetchAll();
 
@@ -598,7 +615,7 @@ $categoryOptions = [
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">サムネイル種別</label>
                             <select name="thumbnail_type" id="thumbnail_type" onchange="toggleThumbnailFields()" 
@@ -606,11 +623,6 @@ $categoryOptions = [
                                 <option value="image" <?= ($editWork['thumbnail_type'] ?? 'image') === 'image' ? 'selected' : '' ?>>画像</option>
                                 <option value="youtube" <?= ($editWork['thumbnail_type'] ?? '') === 'youtube' ? 'selected' : '' ?>>YouTube</option>
                             </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">表示順</label>
-                            <input type="number" name="sort_order" value="<?= $editWork['sort_order'] ?? 0 ?>" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
                         </div>
                     </div>
                     
@@ -728,7 +740,7 @@ $categoryOptions = [
                             <?php if (!empty($editWork['image'])): ?>
                             <img src="../<?= htmlspecialchars($editWork['image']) ?>" class="w-32 h-24 object-cover rounded-lg border hover:border-yellow-400 transition">
                             <?php endif; ?>
-                            <input type="file" name="image" accept="image/*" 
+                            <input type="file" name="image" accept="image/*" id="thumbnail-image-input"
                                 class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
                         </div>
                     </div>
@@ -810,24 +822,22 @@ $categoryOptions = [
                             </div>
                             
                             <!-- プレビュー -->
-                            <?php if (!empty($editWork['image'])): ?>
+                            <?php $hasCropImage = !empty($editWork['image']); ?>
                             <div>
                                 <p class="text-xs text-gray-500 mb-2">プレビュー（16:9）</p>
                                 <div class="relative bg-gray-100 rounded-lg overflow-hidden" style="aspect-ratio: 16/9;">
-                                    <img id="crop-preview-img" src="../<?= htmlspecialchars($editWork['image']) ?>" 
-                                        class="w-full h-full object-cover"
+                                    <img id="crop-preview-img" src="<?= $hasCropImage ? ('../' . htmlspecialchars($editWork['image'])) : '' ?>" 
+                                        class="w-full h-full object-cover <?= $hasCropImage ? '' : 'hidden' ?>"
                                         style="object-position: <?= $cropX ?>% <?= $cropY ?>%;">
+                                    <div id="crop-preview-placeholder" class="absolute inset-0 flex items-center justify-center text-xs text-gray-400 <?= $hasCropImage ? 'hidden' : '' ?>">
+                                        画像をアップロードするとプレビューが表示されます
+                                    </div>
                                     <!-- ポジションインジケーター -->
-                                    <div id="crop-indicator" class="absolute w-4 h-4 bg-yellow-500 rounded-full border-2 border-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                                    <div id="crop-indicator" class="absolute w-4 h-4 bg-yellow-500 rounded-full border-2 border-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 pointer-events-none <?= $hasCropImage ? '' : 'hidden' ?>"
                                         style="left: <?= $cropX ?>%; top: <?= $cropY ?>%;"></div>
                                 </div>
                                 <p class="text-xs text-gray-400 mt-1 text-center">黄色い点が表示の中心になります</p>
                             </div>
-                            <?php else: ?>
-                            <div class="flex items-center justify-center bg-gray-100 rounded-lg" style="aspect-ratio: 16/9;">
-                                <p class="text-xs text-gray-400">画像をアップロードするとプレビューが表示されます</p>
-                            </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -990,13 +1000,33 @@ $categoryOptions = [
         
         <?php else: ?>
         <!-- 作品一覧 -->
-        <div class="flex gap-4 mb-6">
-            <a href="works.php" class="px-4 py-2 rounded-lg text-sm font-bold transition <?= !$showArchived ? 'bg-yellow-400 text-gray-900' : 'bg-white text-gray-600 hover:bg-gray-100' ?>">
-                公開中
-            </a>
-            <a href="works.php?archived=1" class="px-4 py-2 rounded-lg text-sm font-bold transition <?= $showArchived ? 'bg-gray-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100' ?>">
-                アーカイブ
-            </a>
+        <div class="flex flex-wrap items-center gap-4 mb-6">
+            <div class="flex gap-4">
+                <a href="works.php" class="px-4 py-2 rounded-lg text-sm font-bold transition <?= !$showArchived ? 'bg-yellow-400 text-gray-900' : 'bg-white text-gray-600 hover:bg-gray-100' ?>">
+                    公開中
+                </a>
+                <a href="works.php?archived=1" class="px-4 py-2 rounded-lg text-sm font-bold transition <?= $showArchived ? 'bg-gray-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100' ?>">
+                    アーカイブ
+                </a>
+            </div>
+            <form method="GET" class="ml-auto flex flex-wrap items-center gap-2">
+                <?php if ($showArchived): ?>
+                <input type="hidden" name="archived" value="1">
+                <?php endif; ?>
+                <div class="relative">
+                    <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="作品名・タグ・クリエイターで検索"
+                        class="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none w-64">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                </div>
+                <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-800 transition">
+                    検索
+                </button>
+                <?php if ($search !== ''): ?>
+                <a href="works.php<?= $showArchived ? '?archived=1' : '' ?>" class="text-gray-500 text-sm hover:text-gray-700">
+                    クリア
+                </a>
+                <?php endif; ?>
+            </form>
         </div>
         
         <form method="POST" id="bulk-form">
@@ -1077,7 +1107,7 @@ $categoryOptions = [
                         <tr>
                             <td colspan="6" class="px-4 py-12 text-center text-gray-500">
                                 <i class="fas fa-images text-4xl text-gray-300 mb-3"></i>
-                                <p>作品がありません</p>
+                                <p><?= $search !== '' ? '該当する作品がありません' : '作品がありません' ?></p>
                             </td>
                         </tr>
                         <?php endif; ?>
@@ -1139,6 +1169,28 @@ $categoryOptions = [
         // ページ読み込み時にも実行
         document.addEventListener('DOMContentLoaded', function() {
             toggleStickerFields();
+            const thumbnailInput = document.getElementById('thumbnail-image-input');
+            if (thumbnailInput) {
+                thumbnailInput.addEventListener('change', function(event) {
+                    const file = event.target.files && event.target.files[0];
+                    if (!file) return;
+                    const previewImg = document.getElementById('crop-preview-img');
+                    const placeholder = document.getElementById('crop-preview-placeholder');
+                    const indicator = document.getElementById('crop-indicator');
+                    if (previewImg) {
+                        previewImg.src = URL.createObjectURL(file);
+                        previewImg.classList.remove('hidden');
+                        previewImg.onload = () => URL.revokeObjectURL(previewImg.src);
+                    }
+                    if (placeholder) {
+                        placeholder.classList.add('hidden');
+                    }
+                    if (indicator) {
+                        indicator.classList.remove('hidden');
+                    }
+                    updateCropPosition();
+                });
+            }
         });
         
         // 漫画オプション表示切り替え

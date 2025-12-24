@@ -24,6 +24,17 @@ if (isset($_GET['unarchive']) && is_numeric($_GET['unarchive'])) {
     $message = 'アーカイブを解除しました。';
 }
 
+// 完全削除（アーカイブ済みのみ）
+if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+    $stmt = $db->prepare("DELETE FROM inquiries WHERE id = ? AND is_archived = 1");
+    $stmt->execute([$_GET['delete']]);
+    if ($stmt->rowCount() > 0) {
+        $message = '問い合わせを完全に削除しました。';
+    } else {
+        $message = '削除できませんでした。アーカイブ済みの問い合わせを選択してください。';
+    }
+}
+
 // ステータス更新
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     $id = $_POST['id'];
@@ -83,6 +94,15 @@ $stats = [
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-gray-800">問い合わせ管理</h2>
             <p class="text-gray-500">制作依頼・お問い合わせの管理</p>
+        </div>
+
+        <div class="flex gap-4 mb-6">
+            <a href="inquiries.php" class="px-4 py-2 rounded-lg text-sm font-bold transition <?= !$showArchived ? 'bg-yellow-400 text-gray-900' : 'bg-white text-gray-600 hover:bg-gray-100' ?>">
+                受信一覧
+            </a>
+            <a href="inquiries.php?archived=1" class="px-4 py-2 rounded-lg text-sm font-bold transition <?= $showArchived ? 'bg-gray-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100' ?>">
+                アーカイブ
+            </a>
         </div>
         
         <?php if ($message): ?>
@@ -215,11 +235,18 @@ $stats = [
                         
                         <!-- Archive/Unarchive Button -->
                         <?php if ($showArchived): ?>
-                        <a href="?unarchive=<?= $inquiry['id'] ?>" 
-                            class="bg-blue-100 hover:bg-blue-200 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold transition text-center"
-                            onclick="return confirm('アーカイブを解除しますか？')">
-                            <i class="fas fa-undo mr-1"></i>復元
-                        </a>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <a href="?unarchive=<?= $inquiry['id'] ?>" 
+                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold transition text-center"
+                                onclick="return confirm('アーカイブを解除しますか？')">
+                                <i class="fas fa-undo mr-1"></i>復元
+                            </a>
+                            <a href="?delete=<?= $inquiry['id'] ?>" 
+                                class="bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg text-sm font-bold transition text-center"
+                                onclick="return confirm('この問い合わせを完全に削除しますか？この操作は取り消せません。')">
+                                <i class="fas fa-trash mr-1"></i>完全削除
+                            </a>
+                        </div>
                         <?php else: ?>
                         <a href="?archive=<?= $inquiry['id'] ?>" 
                             class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm font-bold transition text-center"
