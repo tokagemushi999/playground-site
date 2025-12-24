@@ -466,32 +466,43 @@ $typeLabels = [
                         <p class="mt-3 font-bold text-gray-700 text-sm truncate"><?= htmlspecialchars($work['title']) ?></p>
                     </div>
                     <?php endforeach; ?>
-                    
-                    <?php 
-                    // イラストカテゴリーの場合、ステッカーグループも表示
-                    if (($cat === 'illust' || $cat === 'illustration') && !empty($stickerGroups)):
-                        foreach ($stickerGroups as $group):
-                            // stack_images の中から画像があるものだけ（最大4枚）
-                            $stackImagesRaw = $group['stack_images'] ?? [];
-                            $stackImages = [];
-                            foreach ($stackImagesRaw as $s) {
-                                if (!empty($s['image'])) $stackImages[] = $s;
-                                if (count($stackImages) >= 4) break;
-                            }
+                </div>
+                <?php 
+                // イラストカテゴリーの場合、ステッカーグループも表示
+                if (($cat === 'illust' || $cat === 'illustration') && !empty($stickerGroups)):
+                    $stickerGroupCount = count($stickerGroups);
+                    $stickerGridClass = 'grid grid-cols-2 gap-6';
+                    if ($stickerGroupCount >= 1 && $stickerGroupCount <= 4) {
+                        $stickerGridClass .= ' md:grid-cols-' . $stickerGroupCount;
+                    } else {
+                        $stickerGridClass .= ' md:grid-cols-3';
+                    }
+                    $stickerGridClass .= !empty($works) ? ' mt-6' : '';
+                ?>
+                <div class="<?= $stickerGridClass ?>">
+                    <?php foreach ($stickerGroups as $group): ?>
+                    <?php
+                        // stack_images の中から画像があるものだけ（最大4枚）
+                        $stackImagesRaw = $group['stack_images'] ?? [];
+                        $stackImages = [];
+                        foreach ($stackImagesRaw as $s) {
+                            if (!empty($s['image'])) $stackImages[] = $s;
+                            if (count($stackImages) >= 4) break;
+                        }
 
-                            // 代表画像が空の場合は stack の先頭にフォールバック
-                            $representativeImage = !empty($group['representative']['image'])
-                                ? $group['representative']['image']
-                                : (!empty($stackImages[0]['image']) ? $stackImages[0]['image'] : '');
+                        // 代表画像が空の場合は stack の先頭にフォールバック
+                        $representativeImage = !empty($group['representative']['image'])
+                            ? $group['representative']['image']
+                            : (!empty($stackImages[0]['image']) ? $stackImages[0]['image'] : '');
 
-                            $stickerCount = $group['sticker_count'] ?? (is_array($group['stickers'] ?? null) ? count($group['stickers']) : 0);
+                        $stickerCount = $group['sticker_count'] ?? (is_array($group['stickers'] ?? null) ? count($group['stickers']) : 0);
 
-                            // 最大4枚のレイヤー（後ろから前へ）
-                            $layers = [];
-                            if (!empty($stackImages[3]['image'])) $layers[] = $stackImages[3]['image'];
-                            if (!empty($stackImages[2]['image'])) $layers[] = $stackImages[2]['image'];
-                            if (!empty($stackImages[1]['image'])) $layers[] = $stackImages[1]['image'];
-                            $layers[] = $representativeImage; // 一番前
+                        // 最大4枚のレイヤー（後ろから前へ）
+                        $layers = [];
+                        if (!empty($stackImages[3]['image'])) $layers[] = $stackImages[3]['image'];
+                        if (!empty($stackImages[2]['image'])) $layers[] = $stackImages[2]['image'];
+                        if (!empty($stackImages[1]['image'])) $layers[] = $stackImages[1]['image'];
+                        $layers[] = $representativeImage; // 一番前
                     ?>
                     <div class="group cursor-pointer" onclick="openStickerGroupModal(<?= $group['id'] ?>)">
                         <div class="aspect-square relative">
@@ -520,11 +531,11 @@ $typeLabels = [
                         </div>
                         <p class="mt-3 font-bold text-gray-700 text-sm truncate"><?= htmlspecialchars($group['title']) ?></p>
                     </div>
-                    <?php 
-                        endforeach;
-                    endif;
-                    ?>
+                <?php 
+                    endforeach;
+                ?>
                 </div>
+                <?php endif; ?>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
