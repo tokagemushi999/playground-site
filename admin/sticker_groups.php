@@ -2,6 +2,7 @@
 session_start();
 require_once '../includes/db.php';
 require_once '../includes/auth.php';
+require_once '../includes/site-settings.php';
 requireAuth();
 
 $db = getDB();
@@ -103,6 +104,10 @@ if ($editGroup) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>グループ管理 | 管理画面</title>
+    <link rel="manifest" href="/admin/manifest.json">
+    <?php $backyardFavicon = getBackyardFaviconInfo($db); ?>
+    <link rel="icon" href="<?= htmlspecialchars($backyardFavicon['path']) ?>" type="<?= htmlspecialchars($backyardFavicon['type']) ?>">
+    <link rel="apple-touch-icon" href="<?= htmlspecialchars($backyardFavicon['path']) ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">

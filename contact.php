@@ -7,22 +7,12 @@
 session_start();
 require_once 'includes/db.php';
 require_once 'includes/csrf.php';
+require_once 'includes/site-settings.php';
 
 mb_language("Japanese");
 mb_internal_encoding("UTF-8");
 
 $db = getDB();
-
-function getSiteSetting($db, $key, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT setting_value FROM site_settings WHERE setting_key = ?");
-        $stmt->execute([$key]);
-        $result = $stmt->fetchColumn();
-        return $result !== false ? $result : $default;
-    } catch (Exception $e) {
-        return $default;
-    }
-}
 
 $site_name = getSiteSetting($db, 'site_name', 'ぷれぐら！');
 $site_subtitle = getSiteSetting($db, 'site_subtitle', 'PLAYGROUND');
