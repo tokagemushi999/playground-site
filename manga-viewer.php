@@ -34,6 +34,7 @@ header("Pragma: no-cache");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
 require_once 'includes/db.php';
+require_once 'includes/site-settings.php';
 
 $db = getDB();
 
@@ -180,17 +181,6 @@ if ($isEmbed && !$allowEmbed) {
     exit;
 }
 
-function getSiteSetting($db, $key, $default = '') {
-    try {
-        $stmt = $db->prepare("SELECT setting_value FROM site_settings WHERE setting_key = ?");
-        $stmt->execute([$key]);
-        $result = $stmt->fetchColumn();
-        return $result !== false ? $result : $default;
-    } catch (Exception $e) {
-        return $default;
-    }
-}
-
 $siteName = getSiteSetting($db, 'site_name', 'ぷれぐら！');
 $siteUrl = getSiteSetting($db, 'site_url', 'https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
 
@@ -220,6 +210,10 @@ if (!empty($referer)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title><?= htmlspecialchars($work['title']) ?> - <?= htmlspecialchars($siteName) ?></title>
+    <link rel="manifest" href="/manifest.json">
+    <?php $faviconInfo = getFaviconInfo($db); ?>
+    <link rel="icon" href="<?= htmlspecialchars($faviconInfo['path']) ?>" type="<?= htmlspecialchars($faviconInfo['type']) ?>">
+    <link rel="apple-touch-icon" href="<?= htmlspecialchars($faviconInfo['path']) ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
