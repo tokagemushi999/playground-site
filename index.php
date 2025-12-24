@@ -640,7 +640,7 @@ $stickerGroupsJson = json_encode($stickerGroups, JSON_UNESCAPED_UNICODE); // ス
                 </div>
                 <div class="w-full md:w-2/3 p-6">
                     <h4 class="font-display text-lg mb-4 text-gray-400">WORKS</h4>
-                    <div id="m-gallery" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                    <div id="m-gallery" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
                 </div>
             </div>
         </div>
