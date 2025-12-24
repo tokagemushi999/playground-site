@@ -5,7 +5,6 @@
 
 require_once 'includes/db.php';
 require_once 'includes/sanitize.php';
-require_once 'includes/site-settings.php';
 
 $db = getDB();
 $article = null;
@@ -83,9 +82,6 @@ $type = $article['article_type'] ?? 'blog';
         <link rel="manifest" href="/manifest.json">
 <title><?= htmlspecialchars($article['title']) ?> | ぷれぐら！PLAYGROUND</title>
     <meta name="description" content="<?= htmlspecialchars($article['excerpt'] ?? '') ?>">
-    <?php $favicon = getSiteFaviconData($db); ?>
-    <link rel="icon" href="<?= htmlspecialchars($favicon['href']) ?>" type="<?= $favicon['type'] ?>">
-    <link rel="apple-touch-icon" href="<?= htmlspecialchars($favicon['apple_touch']) ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Dela+Gothic+One&display=swap" rel="stylesheet">

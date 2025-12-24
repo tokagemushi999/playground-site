@@ -7,9 +7,20 @@
 session_start();
 require_once 'includes/db.php';
 require_once 'includes/csrf.php';
-require_once 'includes/site-settings.php';
 
 $db = getDB();
+
+function getSiteSetting($db, $key, $default = '') {
+    try {
+        $stmt = $db->prepare("SELECT setting_value FROM site_settings WHERE setting_key = ?");
+        $stmt->execute([$key]);
+        $result = $stmt->fetchColumn();
+        return $result !== false ? $result : $default;
+    } catch (Exception $e) {
+        error_log("Error fetching site setting '$key': " . $e->getMessage());
+        return $default;
+    }
+}
 
 $siteSettings = [
     'site_name' => getSiteSetting($db, 'site_name', 'ぷれぐら！'),
@@ -64,9 +75,12 @@ $stickerGroupsJson = json_encode($stickerGroups, JSON_UNESCAPED_UNICODE); // ス
     <meta property="og:url" content="<?= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ?>">
     <meta property="og:image" content="<?php $ogImage = getSiteSetting($db, 'og_image', '/assets/images/ogp.jpg'); echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . htmlspecialchars($ogImage); ?>">
     
-    <?php $favicon = getSiteFaviconData($db); ?>
-    <link rel="icon" href="<?= htmlspecialchars($favicon['href']) ?>" type="<?= $favicon['type'] ?>">
-    <link rel="apple-touch-icon" href="<?= htmlspecialchars($favicon['apple_touch']) ?>">
+    <?php 
+        $favicon = getSiteSetting($db, 'favicon', '/favicon.png');
+        $faviconExt = pathinfo($favicon, PATHINFO_EXTENSION);
+        $faviconType = $faviconExt === 'svg' ? 'image/svg+xml' : 'image/png';
+    ?>
+    <link rel="icon" href="<?= htmlspecialchars($favicon) ?>" type="<?= $faviconType ?>">
     <link rel="manifest" href="/manifest.json">
     
     <script src="https://cdn.tailwindcss.com"></script>

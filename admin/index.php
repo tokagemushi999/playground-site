@@ -26,7 +26,6 @@ $recentInquiries = $db->query("SELECT * FROM inquiries ORDER BY created_at DESC 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ダッシュボード | 管理画面</title>
-    <?php include 'includes/site-head.php'; ?>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
