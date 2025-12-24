@@ -969,6 +969,11 @@ $stickerGroupsJson = json_encode($stickerGroups, JSON_UNESCAPED_UNICODE); // ス
                     `;
                 }).join('');
                 
+                const stickerGroupCount = categoryGroups.reduce((sum, group) => {
+                    const count = group.sticker_count || 0;
+                    return sum + count;
+                }, 0);
+
                 container.innerHTML = `
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-3">
@@ -976,7 +981,7 @@ $stickerGroupsJson = json_encode($stickerGroups, JSON_UNESCAPED_UNICODE); // ス
                                 <i class="fas ${cat.icon} text-white"></i>
                             </div>
                             <h3 class="font-display text-2xl md:text-3xl text-gray-800">${cat.name}</h3>
-                            <span class="text-sm text-gray-400 font-normal">(${filtered.length + categoryGroups.length})</span>
+                            <span class="text-sm text-gray-400 font-normal">(${filtered.length + stickerGroupCount})</span>
                         </div>
                     </div>
                     <div class="${gridClass}">${worksHtml}${stickerGroupsHtml}</div>
