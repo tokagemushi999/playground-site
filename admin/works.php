@@ -10,7 +10,6 @@ requireAuth();
 
 $db = getDB();
 $message = '';
-$bulkErrors = [];
 
 // AJAX: PDFページを1枚ずつアップロード
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
@@ -112,112 +111,6 @@ if (isset($_POST['bulk_restore']) && !empty($_POST['selected_works'])) {
     $stmt = $db->prepare("UPDATE works SET is_active = 1 WHERE id IN ($placeholders)");
     $stmt->execute($ids);
     $message = count($ids) . '件の作品を復元しました。';
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_sticker_save'])) {
-    $creator_id = $_POST['bulk_creator_id'] ?: null;
-    $sticker_group_id = $_POST['bulk_sticker_group_id'] ?: null;
-    $titles = $_POST['bulk_title'] ?? [];
-    $addedCount = 0;
-    $skippedCount = 0;
-    $errors = [];
-
-    if (!$creator_id) {
-        $message = 'クリエイターを選択してください。';
-    } elseif (!is_array($titles) || empty($titles)) {
-        $message = '登録する行がありません。';
-    } else {
-        $baseOrder = 0;
-        if ($sticker_group_id) {
-            $stmt = $db->prepare("SELECT MAX(sticker_order) FROM works WHERE sticker_group_id = ?");
-            $stmt->execute([$sticker_group_id]);
-            $baseOrder = (int)$stmt->fetchColumn();
-        }
-
-        $uploadDir = '../uploads/works/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        foreach ($titles as $index => $title) {
-            $title = trim($title ?? '');
-            $frontName = $_FILES['bulk_image']['name'][$index] ?? '';
-            $frontTmp = $_FILES['bulk_image']['tmp_name'][$index] ?? '';
-            $frontError = $_FILES['bulk_image']['error'][$index] ?? UPLOAD_ERR_NO_FILE;
-            $backName = $_FILES['bulk_back_image']['name'][$index] ?? '';
-            $backTmp = $_FILES['bulk_back_image']['tmp_name'][$index] ?? '';
-            $backError = $_FILES['bulk_back_image']['error'][$index] ?? UPLOAD_ERR_NO_FILE;
-
-            if ($title === '' && $frontName === '' && $backName === '') {
-                continue;
-            }
-
-            if ($title === '') {
-                $errors[] = ($index + 1) . '行目: タイトルが未入力です。';
-                $skippedCount++;
-                continue;
-            }
-
-            if ($frontError !== UPLOAD_ERR_OK || $frontName === '') {
-                $errors[] = ($index + 1) . '行目: 表面画像が未選択です。';
-                $skippedCount++;
-                continue;
-            }
-
-            $image = '';
-            $back_image = '';
-
-            $frontBaseName = uniqid('work_');
-            $frontResult = ImageHelper::processUpload(
-                $frontTmp,
-                $uploadDir,
-                $frontBaseName,
-                ['maxWidth' => 1200, 'maxHeight' => 1200]
-            );
-            if ($frontResult && isset($frontResult['path'])) {
-                $image = 'uploads/works/' . basename($frontResult['path']);
-            }
-
-            if ($backError === UPLOAD_ERR_OK && $backName !== '') {
-                $backBaseName = uniqid('work_back_');
-                $backResult = ImageHelper::processUpload(
-                    $backTmp,
-                    $uploadDir,
-                    $backBaseName,
-                    ['maxWidth' => 1200, 'maxHeight' => 1200]
-                );
-                if ($backResult && isset($backResult['path'])) {
-                    $back_image = 'uploads/works/' . basename($backResult['path']);
-                }
-            }
-
-            if ($image === '') {
-                $errors[] = ($index + 1) . '行目: 表面画像の保存に失敗しました。';
-                $skippedCount++;
-                continue;
-            }
-
-            $stickerOrder = $baseOrder + $addedCount + 1;
-            $stmt = $db->prepare("INSERT INTO works (creator_id, title, description, category, image, back_image, youtube_url, is_featured, is_omake_sticker, sticker_group_id, sticker_order, sort_order, is_manga, reading_direction, view_mode, viewer_theme, first_page_single, crop_position) VALUES (?, ?, '', '', ?, ?, '', 0, 1, ?, ?, 0, 0, 'rtl', 'page', 'dark', 0, '50% 50%')");
-            $stmt->execute([$creator_id, $title, $image, $back_image, $sticker_group_id, $stickerOrder]);
-            $addedCount++;
-        }
-
-        if ($addedCount > 0) {
-            $message = $addedCount . '件のステッカー作品を追加しました。';
-            if ($skippedCount > 0) {
-                $message .= '（' . $skippedCount . '件は未登録）';
-            }
-        } elseif (!empty($errors)) {
-            $message = '登録に失敗しました。入力内容を確認してください。';
-        } else {
-            $message = '登録対象がありませんでした。';
-        }
-    }
-
-    if (!empty($errors)) {
-        $bulkErrors = $errors;
-    }
 }
 
 // 単体削除（アーカイブ）
@@ -646,17 +539,6 @@ $categoryOptions = [
         <?php if ($message): ?>
         <div class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg mb-6">
             <?= htmlspecialchars($message) ?>
-        </div>
-        <?php endif; ?>
-        
-        <?php if (!empty($bulkErrors)): ?>
-        <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-            <p class="font-bold mb-2">未登録の行があります</p>
-            <ul class="list-disc pl-5 space-y-1 text-sm">
-                <?php foreach ($bulkErrors as $error): ?>
-                    <li><?= htmlspecialchars($error) ?></li>
-                <?php endforeach; ?>
-            </ul>
         </div>
         <?php endif; ?>
         
@@ -1149,82 +1031,6 @@ $categoryOptions = [
                 <?php endif; ?>
             </form>
         </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800">ステッカー一括登録</h3>
-                    <p class="text-xs text-gray-500">クリエイターを選択して複数行のタイトル・表/裏画像をまとめて登録できます。</p>
-                </div>
-            </div>
-            <form method="POST" enctype="multipart/form-data" id="bulk-sticker-form">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">クリエイター</label>
-                        <select name="bulk_creator_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 outline-none">
-                            <option value="">選択してください</option>
-                            <?php foreach ($creators as $c): ?>
-                                <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">ステッカーグループ（任意）</label>
-                        <select name="bulk_sticker_group_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 outline-none">
-                            <option value="">選択してください</option>
-                            <?php foreach ($stickerGroups as $group): ?>
-                                <option value="<?= $group['id'] ?>"><?= htmlspecialchars($group['title']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <p class="text-xs text-gray-500 mt-1">選択しない場合は単独ステッカーとして登録されます。</p>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto border border-gray-200 rounded-lg">
-                    <table class="min-w-full text-sm">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-left w-64">タイトル</th>
-                                <th class="px-4 py-3 text-left">表面画像</th>
-                                <th class="px-4 py-3 text-left">裏面画像（任意）</th>
-                                <th class="px-4 py-3 text-left w-16"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="bulk-sticker-rows">
-                            <?php for ($i = 0; $i < 3; $i++): ?>
-                            <tr class="bulk-sticker-row border-t">
-                                <td class="px-4 py-3">
-                                    <input type="text" name="bulk_title[]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 outline-none" placeholder="例: ステッカータイトル">
-                                </td>
-                                <td class="px-4 py-3">
-                                    <input type="file" name="bulk_image[]" accept="image/*" class="bulk-image-input w-full text-xs px-2 py-2 border border-gray-300 rounded-lg">
-                                    <img class="bulk-image-preview mt-2 hidden w-16 h-16 object-cover rounded border border-gray-200" alt="表面プレビュー">
-                                </td>
-                                <td class="px-4 py-3">
-                                    <input type="file" name="bulk_back_image[]" accept="image/*" class="bulk-back-image-input w-full text-xs px-2 py-2 border border-gray-300 rounded-lg">
-                                    <img class="bulk-back-preview mt-2 hidden w-16 h-16 object-cover rounded border border-gray-200" alt="裏面プレビュー">
-                                </td>
-                                <td class="px-4 py-3 text-right">
-                                    <button type="button" class="remove-bulk-row text-gray-400 hover:text-red-500">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php endfor; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
-                    <button type="button" id="add-bulk-row" class="text-sm text-purple-600 hover:text-purple-700 font-bold">
-                        <i class="fas fa-plus-circle mr-1"></i>行を追加
-                    </button>
-                    <button type="submit" name="bulk_sticker_save" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-bold text-sm">
-                        <i class="fas fa-layer-group mr-2"></i>ステッカーを一括登録
-                    </button>
-                </div>
-            </form>
-        </div>
         
         <form method="POST" id="bulk-form">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -1475,109 +1281,7 @@ $categoryOptions = [
                     bulkBtn.disabled = checked === 0;
                 }
             }
-
-            setupBulkStickerForm();
         });
-
-        function setupBulkStickerForm() {
-            const form = document.getElementById('bulk-sticker-form');
-            if (!form) return;
-
-            const rowsContainer = document.getElementById('bulk-sticker-rows');
-            const addRowButton = document.getElementById('add-bulk-row');
-
-            const attachRowEvents = (row) => {
-                const frontInput = row.querySelector('.bulk-image-input');
-                const frontPreview = row.querySelector('.bulk-image-preview');
-                const backInput = row.querySelector('.bulk-back-image-input');
-                const backPreview = row.querySelector('.bulk-back-preview');
-                const removeBtn = row.querySelector('.remove-bulk-row');
-
-                if (frontInput && frontPreview) {
-                    frontInput.addEventListener('change', () => {
-                        updateBulkPreview(frontInput, frontPreview);
-                    });
-                }
-
-                if (backInput && backPreview) {
-                    backInput.addEventListener('change', () => {
-                        updateBulkPreview(backInput, backPreview);
-                    });
-                }
-
-                if (removeBtn) {
-                    removeBtn.addEventListener('click', () => {
-                        const rows = rowsContainer.querySelectorAll('.bulk-sticker-row');
-                        if (rows.length > 1) {
-                            row.remove();
-                        } else {
-                            clearBulkRow(row);
-                        }
-                    });
-                }
-            };
-
-            rowsContainer.querySelectorAll('.bulk-sticker-row').forEach(attachRowEvents);
-
-            if (addRowButton) {
-                addRowButton.addEventListener('click', () => {
-                    const row = document.createElement('tr');
-                    row.className = 'bulk-sticker-row border-t';
-                    row.innerHTML = `
-                        <td class="px-4 py-3">
-                            <input type="text" name="bulk_title[]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 outline-none" placeholder="例: ステッカータイトル">
-                        </td>
-                        <td class="px-4 py-3">
-                            <input type="file" name="bulk_image[]" accept="image/*" class="bulk-image-input w-full text-xs px-2 py-2 border border-gray-300 rounded-lg">
-                            <img class="bulk-image-preview mt-2 hidden w-16 h-16 object-cover rounded border border-gray-200" alt="表面プレビュー">
-                        </td>
-                        <td class="px-4 py-3">
-                            <input type="file" name="bulk_back_image[]" accept="image/*" class="bulk-back-image-input w-full text-xs px-2 py-2 border border-gray-300 rounded-lg">
-                            <img class="bulk-back-preview mt-2 hidden w-16 h-16 object-cover rounded border border-gray-200" alt="裏面プレビュー">
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <button type="button" class="remove-bulk-row text-gray-400 hover:text-red-500">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    rowsContainer.appendChild(row);
-                    attachRowEvents(row);
-                });
-            }
-        }
-
-        function updateBulkPreview(input, preview) {
-            const file = input.files && input.files[0];
-            if (!file) {
-                preview.src = '';
-                preview.classList.add('hidden');
-                return;
-            }
-            preview.src = URL.createObjectURL(file);
-            preview.classList.remove('hidden');
-            preview.onload = () => URL.revokeObjectURL(preview.src);
-        }
-
-        function clearBulkRow(row) {
-            const titleInput = row.querySelector('input[name="bulk_title[]"]');
-            const frontInput = row.querySelector('.bulk-image-input');
-            const backInput = row.querySelector('.bulk-back-image-input');
-            const frontPreview = row.querySelector('.bulk-image-preview');
-            const backPreview = row.querySelector('.bulk-back-preview');
-
-            if (titleInput) titleInput.value = '';
-            if (frontInput) frontInput.value = '';
-            if (backInput) backInput.value = '';
-            if (frontPreview) {
-                frontPreview.src = '';
-                frontPreview.classList.add('hidden');
-            }
-            if (backPreview) {
-                backPreview.src = '';
-                backPreview.classList.add('hidden');
-            }
-        }
         
         // PDF変換用の変数
         let convertedPagesBase64 = [];
