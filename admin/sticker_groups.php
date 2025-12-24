@@ -103,6 +103,13 @@ if ($editGroup) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php $pwaThemeColor = getSiteSetting($db, 'pwa_theme_color', '#ffffff'); ?>
+    <meta name="theme-color" content="<?= htmlspecialchars($pwaThemeColor) ?>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ぷれぐら！管理">
+    <meta name="mobile-web-app-capable" content="yes">
+
     <title>グループ管理 | 管理画面</title>
     <link rel="manifest" href="/admin/manifest.json">
     <?php $backyardFavicon = getBackyardFaviconInfo($db); ?>
