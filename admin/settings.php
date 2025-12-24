@@ -17,55 +17,6 @@ if (!file_exists($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
-function createGrayscaleIcon($sourcePath, $destPath) {
-    if (!file_exists($sourcePath)) {
-        return false;
-    }
-
-    $destDir = dirname($destPath);
-    if (!is_dir($destDir)) {
-        mkdir($destDir, 0755, true);
-    }
-
-    $imageInfo = @getimagesize($sourcePath);
-    if ($imageInfo === false || !function_exists('imagefilter')) {
-        return copy($sourcePath, $destPath);
-    }
-
-    $mimeType = $imageInfo['mime'];
-    $srcImage = match ($mimeType) {
-        'image/png' => imagecreatefrompng($sourcePath),
-        'image/jpeg' => imagecreatefromjpeg($sourcePath),
-        'image/gif' => imagecreatefromgif($sourcePath),
-        'image/webp' => function_exists('imagecreatefromwebp') ? imagecreatefromwebp($sourcePath) : false,
-        default => false,
-    };
-
-    if (!$srcImage) {
-        return copy($sourcePath, $destPath);
-    }
-
-    imagealphablending($srcImage, false);
-    imagesavealpha($srcImage, true);
-    imagefilter($srcImage, IMG_FILTER_GRAYSCALE);
-
-    $saved = match ($mimeType) {
-        'image/png' => imagepng($srcImage, $destPath),
-        'image/jpeg' => imagejpeg($srcImage, $destPath, 90),
-        'image/gif' => imagegif($srcImage, $destPath),
-        'image/webp' => function_exists('imagewebp') ? imagewebp($srcImage, $destPath, 90) : false,
-        default => false,
-    };
-
-    imagedestroy($srcImage);
-
-    if ($saved) {
-        return true;
-    }
-
-    return copy($sourcePath, $destPath);
-}
-
 // 設定を保存
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -158,21 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ---------------------------------------------------------
         $pwaShortName = !empty($settings['pwa_short_name']) ? $settings['pwa_short_name'] : $settings['site_name'];
         $pwaIconPath = !empty($settings['favicon']) ? $settings['favicon'] : ''; // uploads/site/favicon.png
-        $backyardIconPath = '';
-
-        if ($pwaIconPath) {
-            $iconInfo = pathinfo($pwaIconPath);
-            $iconDir = $iconInfo['dirname'] ?? 'uploads/site';
-            $iconBase = $iconInfo['filename'] ?? 'favicon';
-            $iconExt = $iconInfo['extension'] ?? '';
-
-            if ($iconExt !== '') {
-                $backyardIconPath = $iconDir . '/' . $iconBase . '-backyard.' . $iconExt;
-                $sourceFile = dirname(__DIR__) . '/' . $pwaIconPath;
-                $destFile = dirname(__DIR__) . '/' . $backyardIconPath;
-                createGrayscaleIcon($sourceFile, $destFile);
-            }
-        }
 
         $manifestData = [
             "name" => $settings['site_name'],
@@ -204,35 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // adminの一つ上の階層（サイトルート）に manifest.json を書き出し
         // ※権限エラーが出る場合はディレクトリのパーミッションを確認してください
         file_put_contents('../manifest.json', json_encode($manifestData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-
-        // バックヤード用 manifest.json を生成
-        $backyardManifest = [
-            "name" => $settings['site_name'] . " BACKYARD",
-            "short_name" => "BACKYARD",
-            "start_url" => "/admin/login.php",
-            "scope" => "/admin/",
-            "display" => "standalone",
-            "background_color" => "#ffffff",
-            "theme_color" => $settings['pwa_theme_color'],
-            "icons" => []
-        ];
-
-        if (!empty($backyardIconPath)) {
-            $backyardExt = pathinfo($backyardIconPath, PATHINFO_EXTENSION);
-            $backyardMimeType = match($backyardExt) {
-                'svg' => 'image/svg+xml',
-                'ico' => 'image/x-icon',
-                default => 'image/png'
-            };
-
-            $backyardManifest['icons'][] = [
-                "src" => "/" . $backyardIconPath,
-                "sizes" => "192x192 512x512",
-                "type" => $backyardMimeType
-            ];
-        }
-
-        file_put_contents(__DIR__ . '/manifest.json', json_encode($backyardManifest, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
         
         $message = '設定を保存し、manifest.jsonを更新しました';
 
