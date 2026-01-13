@@ -7,7 +7,6 @@ require_once 'includes/db.php';
 require_once 'includes/site-settings.php';
 require_once 'includes/seo-tags.php';
 require_once 'includes/gallery-render.php';
-require_once 'includes/media-utils.php';
 
 $db = getDB();
 $creator = null;
@@ -33,8 +32,26 @@ $stmt = $db->prepare("SELECT * FROM works WHERE is_active = 1 AND creator_id = ?
 $stmt->execute([$creator['id']]);
 $creatorWorks = $stmt->fetchAll();
 
+// WebM存在チェック関数
+function checkWebmExists($imagePath) {
+    if (empty($imagePath)) return false;
+    $baseDir = __DIR__;
+    $path = '/' . ltrim($imagePath, '/');
+    if (preg_match('/\.webm$/i', $path)) {
+        return file_exists($baseDir . $path);
+    }
+    if (preg_match('/\.gif$/i', $path)) {
+        $webmPath = preg_replace('/\.gif$/i', '.webm', $path);
+        return file_exists($baseDir . $webmPath);
+    }
+    return false;
+}
+
 // 作品にwebm_existsフラグを追加
-$creatorWorks = appendWebmExistsFlag($creatorWorks, 'image');
+foreach ($creatorWorks as &$w) {
+    $w['webm_exists'] = checkWebmExists($w['image']);
+}
+unset($w);
 
 // N+1問題の解消: マンガ作品のページを一括取得
 $mangaWorkIds = [];

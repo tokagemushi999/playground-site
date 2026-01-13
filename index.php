@@ -9,7 +9,6 @@ require_once 'includes/db.php';
 require_once 'includes/csrf.php';
 require_once 'includes/site-settings.php';
 require_once 'includes/gallery-render.php';
-require_once 'includes/media-utils.php';
 
 $db = getDB();
 
@@ -60,10 +59,37 @@ try {
     $topServices = [];
 }
 
+// WebM存在チェック関数
+function checkWebmExists($imagePath) {
+    if (empty($imagePath)) return false;
+    $baseDir = __DIR__;
+    $path = '/' . ltrim($imagePath, '/');
+    
+    // .webmパスの場合はそのままtrue
+    if (preg_match('/\.webm$/i', $path)) {
+        return file_exists($baseDir . $path);
+    }
+    
+    // .gif/.GIFの場合は同名.webmをチェック
+    if (preg_match('/\.gif$/i', $path)) {
+        $webmPath = preg_replace('/\.gif$/i', '.webm', $path);
+        return file_exists($baseDir . $webmPath);
+    }
+    
+    return false;
+}
+
 // 各データにwebm_existsフラグを追加
-$works = appendWebmExistsFlag($works, 'image');
-$creators = appendWebmExistsFlag($creators, 'image');
-$articles = appendWebmExistsFlag($articles, 'thumbnail');
+foreach ($works as &$w) {
+    $w['webm_exists'] = checkWebmExists($w['image']);
+}
+foreach ($creators as &$c) {
+    $c['webm_exists'] = checkWebmExists($c['image']);
+}
+foreach ($articles as &$a) {
+    $a['webm_exists'] = checkWebmExists($a['thumbnail']);
+}
+unset($w, $c, $a);
 
 // クリエイターごとのサービス情報を取得
 $creatorServices = [];
