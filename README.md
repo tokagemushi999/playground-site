@@ -114,6 +114,7 @@ public_html/
 │   ├── member-auth.php    # 会員認証
 │   ├── site-settings.php  # サイト設定取得・画像パス正規化
 │   ├── image-helper.php   # 画像処理（リサイズ・WebP変換）
+│   ├── formatting.php     # 表示用フォーマット共通化
 │   ├── gallery-render.php # ギャラリー描画共通関数
 │   ├── shipping.php       # 配送業者名・追跡URL共通化
 │   ├── cart.php           # カート操作
@@ -345,6 +346,26 @@ CREATE DATABASE playground CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 1. Search Console > サイトマップ
 2. `https://yourdomain.com/sitemap.xml` を送信
 
+## ローカル開発
+
+```bash
+# PHPの組み込みサーバーで起動（.htaccessは反映されないためURLは.phpでアクセス）
+php -S 0.0.0.0:8000
+```
+
+- `includes/db.php` の接続情報をローカル環境のDBに合わせてください。
+- `.htaccess` のリライトルールを使う場合はApache/Nginx側の設定が必要です。
+
+## 動作チェック / テスト
+
+```bash
+# 変更ファイルの構文チェック
+php -l includes/admin-ui.php
+php -l includes/formatting.php
+php -l includes/stripe-config.php
+php -l creator-dashboard/services.php
+```
+
 ## OGP設定
 
 各ページは以下のOGP画像を使用します：
@@ -387,6 +408,13 @@ getSiteSettings()
 ```php
 // Google Analytics / Search ConsoleのタグをHTML出力
 outputSeoTags($db)
+```
+
+### includes/formatting.php
+
+```php
+// 金額の表示フォーマット
+formatPrice($price)
 ```
 
 ### includes/gallery-render.php
@@ -460,6 +488,11 @@ getTrackingUrl($carrierCode, $trackingNumber)
 プライベートプロジェクト
 
 ## 更新履歴
+
+### 2026-01-08
+- 価格表示フォーマットを共通ヘルパーに統一
+- クリエイターダッシュボードのUIヘルパー読み込みを整理
+- READMEにローカル開発・テスト手順を追加
 
 ### 2026-01-07
 - 配送業者名・追跡URL生成を共通ヘルパーへ整理（includes/shipping.php）

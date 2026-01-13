@@ -9,6 +9,9 @@
  * - 失敗: 4000 0000 0000 0002
  */
 
+require_once __DIR__ . '/formatting.php';
+require_once __DIR__ . '/site-settings.php';
+
 // ============================================
 // DBから設定を読み込む
 // ============================================
@@ -98,13 +101,6 @@ function initStripe() {
 // ============================================
 
 /**
- * 金額を表示用にフォーマット
- */
-function formatPrice($price) {
-    return '¥' . number_format($price);
-}
-
-/**
  * 注文番号を生成
  */
 function generateOrderNumber() {
@@ -191,21 +187,4 @@ function calculateShippingFee($prefecture, $subtotal, $db, $cartItems = []) {
     
     // カートアイテムがない場合は基本送料を返す
     return $defaultFee;
-}
-
-/**
- * getSiteSetting関数（stripe-config.php用）
- * includes/site-settings.phpに同名関数があるので重複定義を避ける
- */
-if (!function_exists('getSiteSetting')) {
-    function getSiteSetting($db, $key, $default = '') {
-        try {
-            $stmt = $db->prepare("SELECT setting_value FROM site_settings WHERE setting_key = ?");
-            $stmt->execute([$key]);
-            $result = $stmt->fetchColumn();
-            return $result !== false ? $result : $default;
-        } catch (Exception $e) {
-            return $default;
-        }
-    }
 }
