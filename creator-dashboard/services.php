@@ -9,6 +9,7 @@ require_once '../includes/db.php';
 require_once '../includes/creator-auth.php';
 require_once '../includes/image-helper.php';
 require_once '../includes/content-manager.php';
+require_once '../includes/admin-ui.php';
 
 $creator = requireCreatorAuth();
 $db = getDB();

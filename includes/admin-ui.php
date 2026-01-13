@@ -4,6 +4,8 @@
  * 運営側・クリエイター側で共通のUI部品を提供
  */
 
+require_once __DIR__ . '/formatting.php';
+
 // 権限定数
 define('ROLE_ADMIN', 'admin');
 define('ROLE_CREATOR', 'creator');
@@ -101,12 +103,6 @@ function formatDateTime($datetime) {
 
 function formatDateShort($datetime) {
     return formatDate($datetime, 'n/j');
-}
-
-// 金額フォーマット
-function formatPrice($price) {
-    if ($price === null || $price === '') return '-';
-    return '¥' . number_format($price);
 }
 
 // テーブルヘッダー
