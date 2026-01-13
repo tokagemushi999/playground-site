@@ -8,6 +8,7 @@ require_once '../includes/member-auth.php';
 require_once '../includes/site-settings.php';
 require_once '../includes/cart.php';
 require_once '../includes/stripe-config.php';
+require_once '../includes/shipping.php';
 
 requireMemberAuth();
 
@@ -168,36 +169,9 @@ include 'includes/header.php';
     
     <?php if ($order['tracking_number']): ?>
     <?php
-    // 配送業者名
-    $carrierNames = [
-        'yamato' => 'ヤマト運輸',
-        'sagawa' => '佐川急便',
-        'japanpost' => '日本郵便',
-        'japanpost_yu' => 'ゆうパック',
-        'clickpost' => 'クリックポスト',
-        'nekopos' => 'ネコポス',
-        'yupacket' => 'ゆうパケット',
-        'other' => 'その他',
-    ];
-    $carrierName = $carrierNames[$order['shipping_carrier'] ?? ''] ?? '';
-    
-    // 追跡URL
-    $trackingUrl = '';
-    switch ($order['shipping_carrier'] ?? '') {
-        case 'yamato':
-        case 'nekopos':
-            $trackingUrl = "https://toi.kuronekoyamato.co.jp/cgi-bin/tneko?number=" . urlencode($order['tracking_number']);
-            break;
-        case 'sagawa':
-            $trackingUrl = "https://k2k.sagawa-exp.co.jp/p/web/okurijosearch.do?okurijoNo=" . urlencode($order['tracking_number']);
-            break;
-        case 'japanpost':
-        case 'japanpost_yu':
-        case 'clickpost':
-        case 'yupacket':
-            $trackingUrl = "https://trackings.post.japanpost.jp/services/srv/search/?requestNo1=" . urlencode($order['tracking_number']);
-            break;
-    }
+    $carrierCode = $order['shipping_carrier'] ?? '';
+    $carrierName = getShippingCarrierName($carrierCode, '');
+    $trackingUrl = getTrackingUrl($carrierCode, $order['tracking_number']);
     ?>
     <div class="mt-3 p-3 bg-blue-50 rounded">
         <p class="text-sm text-blue-700 mb-1">
