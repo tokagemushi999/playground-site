@@ -3,6 +3,7 @@
  * 書類HTML生成ヘルパー
  * Google Driveに保存するきれいなHTML書類を生成
  */
+require_once __DIR__ . '/formatting.php';
 
 /**
  * 基本HTMLテンプレートのヘッダー
@@ -276,9 +277,9 @@ function generateReceiptHtml($order, $orderItems, $shopName, $shopInvoiceNumber 
     $title = '領収書';
     $orderNumber = $order['order_number'];
     $paidAt = $order['paid_at'] ? date('Y年n月j日', strtotime($order['paid_at'])) : date('Y年n月j日');
-    $total = number_format($order['total']);
-    $subtotal = number_format($order['subtotal']);
-    $shippingFee = number_format($order['shipping_fee']);
+    $total = formatPrice($order['total'] ?? 0);
+    $subtotal = formatPrice($order['subtotal'] ?? 0);
+    $shippingFee = formatPrice($order['shipping_fee'] ?? 0);
     
     $html = getDocumentHeader($title, $shopName);
     
@@ -321,16 +322,16 @@ HTML;
     
     foreach ($orderItems as $item) {
         $itemName = htmlspecialchars($item['product_name']);
-        $quantity = $item['quantity'];
-        $price = number_format($item['price']);
-        $itemSubtotal = number_format($item['subtotal']);
+        $quantity = formatNumber($item['quantity'] ?? 0, '0');
+        $price = formatPrice($item['price'] ?? 0);
+        $itemSubtotal = formatPrice($item['subtotal'] ?? 0);
         
         $html .= <<<HTML
                 <tr>
                     <td>{$itemName}</td>
                     <td class="text-center">{$quantity}</td>
-                    <td class="text-right amount">¥{$price}</td>
-                    <td class="text-right amount">¥{$itemSubtotal}</td>
+                    <td class="text-right amount">{$price}</td>
+                    <td class="text-right amount">{$itemSubtotal}</td>
                 </tr>
 HTML;
     }
@@ -340,15 +341,15 @@ HTML;
             <tfoot>
                 <tr>
                     <td colspan="3" class="text-right">小計</td>
-                    <td class="text-right amount">¥{$subtotal}</td>
+                    <td class="text-right amount">{$subtotal}</td>
                 </tr>
                 <tr>
                     <td colspan="3" class="text-right">送料</td>
-                    <td class="text-right amount">¥{$shippingFee}</td>
+                    <td class="text-right amount">{$shippingFee}</td>
                 </tr>
                 <tr class="total-row">
                     <td colspan="3" class="text-right">合計（税込）</td>
-                    <td class="text-right amount">¥{$total}</td>
+                    <td class="text-right amount">{$total}</td>
                 </tr>
             </tfoot>
         </table>
@@ -374,12 +375,12 @@ function generatePaymentNoticeHtml($creator, $salesData, $shopName, $targetYear,
     $creatorName = $creator['name'] ?? '';
     $displayMonth = "{$targetYear}年{$targetMonth}月";
     
-    $grossSales = number_format($salesData['gross_sales']);
-    $commission = number_format($salesData['commission']);
-    $withholdingTax = number_format($salesData['withholding_tax']);
-    $netPayment = number_format($salesData['net_payment']);
-    $orderCount = $salesData['order_count'];
-    $itemCount = $salesData['item_count'];
+    $grossSales = formatPrice($salesData['gross_sales'] ?? 0);
+    $commission = formatPrice($salesData['commission'] ?? 0);
+    $withholdingTax = formatPrice($salesData['withholding_tax'] ?? 0);
+    $netPayment = formatPrice($salesData['net_payment'] ?? 0);
+    $orderCount = formatNumber($salesData['order_count'] ?? 0, '0');
+    $itemCount = formatNumber($salesData['item_count'] ?? 0, '0');
     
     $commissionRate = $creator['commission_rate'] ?? 20;
     $commissionPerItem = $creator['commission_per_item'] ?? 0;
@@ -423,11 +424,11 @@ function generatePaymentNoticeHtml($creator, $salesData, $shopName, $targetYear,
         <table>
             <tr>
                 <th width="200">売上総額</th>
-                <td class="text-right amount">¥{$grossSales}</td>
+                <td class="text-right amount">{$grossSales}</td>
             </tr>
             <tr>
                 <th>販売手数料（{$commissionRate}%）</th>
-                <td class="text-right amount">- ¥{$commission}</td>
+                <td class="text-right amount">- {$commission}</td>
             </tr>
 HTML;
 
@@ -435,7 +436,7 @@ HTML;
         $html .= <<<HTML
             <tr>
                 <th>源泉徴収税（10.21%）</th>
-                <td class="text-right amount">- ¥{$withholdingTax}</td>
+                <td class="text-right amount">- {$withholdingTax}</td>
             </tr>
 HTML;
     }
@@ -443,7 +444,7 @@ HTML;
     $html .= <<<HTML
             <tr class="total-row">
                 <th>お支払金額</th>
-                <td class="text-right amount">¥{$netPayment}</td>
+                <td class="text-right amount">{$netPayment}</td>
             </tr>
         </table>
     </div>
