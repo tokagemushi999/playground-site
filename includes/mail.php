@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . '/shipping.php';
+require_once __DIR__ . '/formatting.php';
 
 // SMTP設定（二重定義を防ぐ）
 if (!defined('SMTP_HOST')) {
@@ -193,7 +194,7 @@ function sendOrderConfirmationMail($order, $orderItems, $member) {
     foreach ($orderItems as $item) {
         $type = $item['product_type'] === 'digital' ? 'デジタル' : '物販';
         $itemsList .= "  ・{$item['product_name']}（{$type}）\n";
-        $itemsList .= "    ¥" . number_format($item['price']) . " × {$item['quantity']}点 = ¥" . number_format($item['subtotal']) . "\n";
+        $itemsList .= "    " . formatPrice($item['price'] ?? 0) . " × {$item['quantity']}点 = " . formatPrice($item['subtotal'] ?? 0) . "\n";
     }
     
     // デジタル商品セクション
@@ -256,9 +257,9 @@ TEL: {$order['shipping_phone']}";
         'order_number' => $order['order_number'],
         'order_date' => $order['created_at'],
         'order_items' => $itemsList,
-        'subtotal' => number_format($order['subtotal']),
-        'shipping_fee' => number_format($order['shipping_fee']),
-        'total' => number_format($order['total']),
+        'subtotal' => formatNumber($order['subtotal'] ?? 0, '0'),
+        'shipping_fee' => formatNumber($order['shipping_fee'] ?? 0, '0'),
+        'total' => formatNumber($order['total'] ?? 0, '0'),
         'digital_section' => $digitalSection,
         'invoice_section' => $invoiceSection,
         'shipping_section' => $shippingSection,
@@ -321,7 +322,7 @@ function sendNewOrderNotificationToAdmin($order, $orderItems, $member, $adminEma
     $vars = [
         'order_number' => $order['order_number'],
         'order_date' => $order['created_at'],
-        'total' => number_format($order['total']),
+        'total' => formatNumber($order['total'] ?? 0, '0'),
         'member_name' => $member['name'],
         'member_email' => $member['email'],
         'order_items' => $itemsList,

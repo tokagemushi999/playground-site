@@ -415,6 +415,9 @@ outputSeoTags($db)
 ```php
 // 金額の表示フォーマット
 formatPrice($price)
+
+// 数値の表示フォーマット
+formatNumber($value, $default = '-')
 ```
 
 ### includes/gallery-render.php
@@ -488,6 +491,9 @@ getTrackingUrl($carrierCode, $trackingNumber)
 プライベートプロジェクト
 
 ## 更新履歴
+
+### 2026-01-09
+- 書類・メールで金額/数値フォーマットを共通ヘルパーに統一
 
 ### 2026-01-08
 - 価格表示フォーマットを共通ヘルパーに統一
