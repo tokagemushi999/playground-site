@@ -9,6 +9,7 @@ require_once 'includes/db.php';
 require_once 'includes/csrf.php';
 require_once 'includes/site-settings.php';
 require_once 'includes/gallery-render.php';
+require_once 'includes/image-helper.php';
 
 $db = getDB();
 
@@ -57,26 +58,6 @@ try {
     }
 } catch (Exception $e) {
     $topServices = [];
-}
-
-// WebM存在チェック関数
-function checkWebmExists($imagePath) {
-    if (empty($imagePath)) return false;
-    $baseDir = __DIR__;
-    $path = '/' . ltrim($imagePath, '/');
-    
-    // .webmパスの場合はそのままtrue
-    if (preg_match('/\.webm$/i', $path)) {
-        return file_exists($baseDir . $path);
-    }
-    
-    // .gif/.GIFの場合は同名.webmをチェック
-    if (preg_match('/\.gif$/i', $path)) {
-        $webmPath = preg_replace('/\.gif$/i', '.webm', $path);
-        return file_exists($baseDir . $webmPath);
-    }
-    
-    return false;
 }
 
 // 各データにwebm_existsフラグを追加

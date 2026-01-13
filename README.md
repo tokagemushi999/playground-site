@@ -459,6 +459,16 @@ renderGalleryItem($item, $options = [])
 renderGalleryGrid($items, $options = [])
 ```
 
+### includes/image-helper.php
+
+```php
+// GIF/WebMの存在チェック
+checkWebmExists($path, $basePath = null)
+
+// 画像/動画タグ生成（簡易版）
+renderMediaTag($path, $class = '', $alt = '', $style = '')
+```
+
 ### includes/shipping.php
 
 ```php
@@ -520,6 +530,10 @@ getTrackingUrl($carrierCode, $trackingNumber)
 プライベートプロジェクト
 
 ## 更新履歴
+
+### 2026-01-11
+- WebM存在チェックを共通ヘルパーへ統一（includes/image-helper.php）
+- クリエイターページ/取引詳細で金額表示を共通フォーマット関数に統一
 
 ### 2026-01-10
 - ストア/取引画面の金額・数値表示を共通フォーマット関数へ統一
