@@ -3,6 +3,8 @@
  * メール送信ヘルパー（Gmail SMTP対応 + テンプレート対応）
  */
 
+require_once __DIR__ . '/shipping.php';
+
 // SMTP設定（二重定義を防ぐ）
 if (!defined('SMTP_HOST')) {
     define('SMTP_HOST', 'smtp.gmail.com');
@@ -285,41 +287,11 @@ function sendShippingNotificationMail($order, $orderItems, $member) {
     }
     $shippingAddress .= "{$order['shipping_name']} 様";
     
-    // 配送業者の日本語表記
-    $carrierNames = [
-        'yamato' => 'ヤマト運輸',
-        'sagawa' => '佐川急便',
-        'japanpost' => '日本郵便',
-        'japanpost_yu' => 'ゆうパック',
-        'clickpost' => 'クリックポスト',
-        'nekopos' => 'ネコポス',
-        'yupacket' => 'ゆうパケット',
-        'other' => 'その他',
-    ];
-    $carrierName = $carrierNames[$order['shipping_carrier'] ?? ''] ?? ($order['shipping_carrier'] ?? '未設定');
-    
-    // 追跡URL
-    $trackingUrl = '';
+    $carrierCode = $order['shipping_carrier'] ?? '';
+    $carrierName = getShippingCarrierName($carrierCode, $order['shipping_carrier'] ?? '未設定');
+
     $trackingNumber = $order['tracking_number'] ?? '';
-    if ($trackingNumber) {
-        switch ($order['shipping_carrier'] ?? '') {
-            case 'yamato':
-                $trackingUrl = "https://toi.kuronekoyamato.co.jp/cgi-bin/tneko?number={$trackingNumber}";
-                break;
-            case 'sagawa':
-                $trackingUrl = "https://k2k.sagawa-exp.co.jp/p/web/okurijosearch.do?okurijoNo={$trackingNumber}";
-                break;
-            case 'japanpost':
-            case 'japanpost_yu':
-            case 'clickpost':
-            case 'yupacket':
-                $trackingUrl = "https://trackings.post.japanpost.jp/services/srv/search/?requestNo1={$trackingNumber}";
-                break;
-            case 'nekopos':
-                $trackingUrl = "https://toi.kuronekoyamato.co.jp/cgi-bin/tneko?number={$trackingNumber}";
-                break;
-        }
-    }
+    $trackingUrl = getTrackingUrl($carrierCode, $trackingNumber);
     
     $vars = [
         'member_name' => $member['name'],

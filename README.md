@@ -115,6 +115,7 @@ public_html/
 │   ├── site-settings.php  # サイト設定取得・画像パス正規化
 │   ├── image-helper.php   # 画像処理（リサイズ・WebP変換）
 │   ├── gallery-render.php # ギャラリー描画共通関数
+│   ├── shipping.php       # 配送業者名・追跡URL共通化
 │   ├── cart.php           # カート操作
 │   ├── stripe-config.php  # Stripe設定（DB連動）
 │   ├── stripe-php/        # Stripe PHPライブラリ
@@ -398,6 +399,16 @@ renderGalleryItem($item, $options = [])
 renderGalleryGrid($items, $options = [])
 ```
 
+### includes/shipping.php
+
+```php
+// 配送業者名を取得
+getShippingCarrierName($carrierCode, $fallback = '未設定')
+
+// 追跡URLを取得
+getTrackingUrl($carrierCode, $trackingNumber)
+```
+
 ## セキュリティ
 
 - CSRF対策（トークン検証）
@@ -449,6 +460,10 @@ renderGalleryGrid($items, $options = [])
 プライベートプロジェクト
 
 ## 更新履歴
+
+### 2026-01-07
+- 配送業者名・追跡URL生成を共通ヘルパーへ整理（includes/shipping.php）
+- ストア注文詳細・発送完了メールで共通関数を利用
 
 ### 2026-01-06（追加更新）
 - **Google Drive連携機能**
