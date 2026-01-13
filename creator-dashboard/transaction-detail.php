@@ -11,6 +11,7 @@ require_once '../includes/db.php';
 require_once '../includes/csrf.php';
 require_once '../includes/creator-auth.php';
 require_once '../includes/transactions.php';
+require_once '../includes/formatting.php';
 
 $creator = requireCreatorAuth();
 $db = getDB();
@@ -452,7 +453,7 @@ require_once 'includes/header.php';
                 <?php if (!empty($transaction['request_budget'])): ?>
                 <div>
                     <span class="text-gray-500">希望予算</span>
-                    <span class="font-medium">¥<?= number_format($transaction['request_budget']) ?></span>
+                    <span class="font-medium"><?= formatPrice($transaction['request_budget'] ?? 0) ?></span>
                 </div>
                 <?php endif; ?>
                 <?php if (!empty($transaction['request_deadline'])): ?>
@@ -479,7 +480,7 @@ require_once 'includes/header.php';
                 <div class="p-2 bg-gray-50 rounded">
                     <div class="flex justify-between text-sm">
                         <span>v<?= $q['version'] ?></span>
-                        <span class="font-bold">¥<?= number_format($q['total_amount']) ?></span>
+                        <span class="font-bold"><?= formatPrice($q['total_amount'] ?? 0) ?></span>
                     </div>
                     <div class="text-xs text-gray-500">
                         <?= $q['status'] === 'accepted' ? '✅承諾済み' : ($q['status'] === 'sent' ? '📤送信済み' : $q['status']) ?>
@@ -502,7 +503,7 @@ require_once 'includes/header.php';
                 <?php if (!empty($transaction['total_amount'])): ?>
                 <div class="flex justify-between">
                     <span class="text-gray-500">金額</span>
-                    <span class="font-bold text-green-600">¥<?= number_format($transaction['total_amount']) ?></span>
+                    <span class="font-bold text-green-600"><?= formatPrice($transaction['total_amount'] ?? 0) ?></span>
                 </div>
                 <?php endif; ?>
                 <?php if (!empty($transaction['paid_at'])): ?>

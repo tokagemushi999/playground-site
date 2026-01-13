@@ -7,6 +7,8 @@ require_once 'includes/db.php';
 require_once 'includes/site-settings.php';
 require_once 'includes/seo-tags.php';
 require_once 'includes/gallery-render.php';
+require_once 'includes/formatting.php';
+require_once 'includes/image-helper.php';
 
 $db = getDB();
 $creator = null;
@@ -31,21 +33,6 @@ if (!$creator) {
 $stmt = $db->prepare("SELECT * FROM works WHERE is_active = 1 AND creator_id = ? AND (work_type IS NULL OR work_type != 'line_stamp') ORDER BY sort_order ASC, id DESC");
 $stmt->execute([$creator['id']]);
 $creatorWorks = $stmt->fetchAll();
-
-// WebM存在チェック関数
-function checkWebmExists($imagePath) {
-    if (empty($imagePath)) return false;
-    $baseDir = __DIR__;
-    $path = '/' . ltrim($imagePath, '/');
-    if (preg_match('/\.webm$/i', $path)) {
-        return file_exists($baseDir . $path);
-    }
-    if (preg_match('/\.gif$/i', $path)) {
-        $webmPath = preg_replace('/\.gif$/i', '.webm', $path);
-        return file_exists($baseDir . $webmPath);
-    }
-    return false;
-}
 
 // 作品にwebm_existsフラグを追加
 foreach ($creatorWorks as &$w) {
@@ -730,13 +717,13 @@ $ogImage = getOgImageUrl($creator['image'] ?? '', $baseUrl);
                         <?php endif; ?>
                         <div class="flex items-center justify-between">
                             <span class="text-pop-purple font-bold text-lg">
-                                ¥<?= number_format($service['min_price'] ?? $service['base_price']) ?>〜
+                                <?= formatPrice($service['min_price'] ?? $service['base_price']) ?>〜
                             </span>
                             <div class="flex items-center gap-3 text-sm text-gray-500">
                                 <?php if (!empty($service['avg_rating'])): ?>
                                 <span class="text-yellow-400">
                                     <i class="fas fa-star"></i>
-                                    <?= number_format($service['avg_rating'], 1) ?>
+                                    <?= formatNumber($service['avg_rating'] ?? 0, '0.0', 1) ?>
                                 </span>
                                 <?php endif; ?>
                                 <span>
@@ -794,9 +781,9 @@ $ogImage = getOgImageUrl($creator['image'] ?? '', $baseUrl);
                             <?= htmlspecialchars($product['name']) ?>
                         </h3>
                         <div class="flex items-center gap-2">
-                            <span class="text-pop-yellow font-bold">¥<?= number_format($product['price']) ?></span>
+                            <span class="text-pop-yellow font-bold"><?= formatPrice($product['price'] ?? 0) ?></span>
                             <?php if (!empty($product['compare_price']) && $product['compare_price'] > $product['price']): ?>
-                            <span class="text-gray-400 text-xs line-through">¥<?= number_format($product['compare_price']) ?></span>
+                            <span class="text-gray-400 text-xs line-through"><?= formatPrice($product['compare_price'] ?? 0) ?></span>
                             <?php endif; ?>
                         </div>
                     </div>

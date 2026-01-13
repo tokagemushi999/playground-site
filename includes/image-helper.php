@@ -542,3 +542,35 @@ function renderMediaTag($path, $class = '', $alt = '', $style = '') {
     // その他 → imgタグ
     return '<img src="' . htmlspecialchars($path) . '" alt="' . $altAttr . '"' . $classAttr . $styleAttr . ' loading="lazy">';
 }
+
+/**
+ * WebMの存在チェック
+ * - .webmの場合は実体の存在
+ * - .gifの場合は同名の.webmの存在
+ *
+ * @param string $path 画像/動画パス
+ * @param string|null $basePath サーバー上のベースパス（省略時は自動検出）
+ * @return bool
+ */
+function checkWebmExists($path, $basePath = null) {
+    if (empty($path)) {
+        return false;
+    }
+
+    if ($basePath === null) {
+        $basePath = dirname(__DIR__); // public_html
+    }
+
+    $path = '/' . ltrim($path, '/');
+
+    if (preg_match('/\.webm$/i', $path)) {
+        return file_exists(rtrim($basePath, '/') . $path);
+    }
+
+    if (preg_match('/\.gif$/i', $path)) {
+        $webmPath = preg_replace('/\.gif$/i', '.webm', $path);
+        return file_exists(rtrim($basePath, '/') . $webmPath);
+    }
+
+    return false;
+}
