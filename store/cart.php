@@ -141,7 +141,7 @@ include 'includes/header.php';
             <?php endif; ?>
             <div class="p-3">
                 <p class="font-bold text-gray-800 text-sm line-clamp-2 mb-1"><?= htmlspecialchars($rec['name']) ?></p>
-                <p class="text-pop-orange font-bold">¥<?= number_format($rec['price']) ?></p>
+                <p class="text-pop-orange font-bold"><?= formatPrice($rec['price']) ?></p>
             </div>
         </a>
         <?php endforeach; ?>
@@ -161,7 +161,7 @@ include 'includes/header.php';
         </div>
         <div>
             <p class="font-bold text-green-700"><i class="fas fa-check-circle mr-1"></i>送料無料です！</p>
-            <p class="text-sm text-green-600">¥<?= number_format($shippingFreeThreshold) ?>以上のご注文で送料無料</p>
+            <p class="text-sm text-green-600"><?= formatPrice($shippingFreeThreshold) ?>以上のご注文で送料無料</p>
         </div>
     </div>
     <?php else: ?>
@@ -170,8 +170,8 @@ include 'includes/header.php';
             <i class="fas fa-truck text-orange-500"></i>
         </div>
         <div class="flex-1">
-            <p class="font-bold text-gray-800">あと<span class="text-pop-orange">¥<?= number_format($amountToFreeShipping) ?></span>で送料無料！</p>
-            <p class="text-sm text-gray-600">¥<?= number_format($shippingFreeThreshold) ?>以上のご注文で送料無料</p>
+            <p class="font-bold text-gray-800">あと<span class="text-pop-orange"><?= formatPrice($amountToFreeShipping) ?></span>で送料無料！</p>
+            <p class="text-sm text-gray-600"><?= formatPrice($shippingFreeThreshold) ?>以上のご注文で送料無料</p>
         </div>
     </div>
     <div class="w-full bg-gray-200 rounded-full h-2.5">
@@ -201,7 +201,7 @@ include 'includes/header.php';
                     <span class="inline-block mt-1 text-xs <?= $item['product_type'] === 'digital' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600' ?> px-2 py-0.5 rounded">
                         <?= $item['product_type'] === 'digital' ? 'デジタル' : '物販' ?>
                     </span>
-                    <p class="font-bold text-pop-orange mt-2">¥<?= number_format($item['price']) ?></p>
+                    <p class="font-bold text-pop-orange mt-2"><?= formatPrice($item['price']) ?></p>
                 </div>
             </div>
             <div class="flex items-center justify-between border-t px-4 py-2 bg-gray-50 text-sm">
@@ -241,7 +241,7 @@ include 'includes/header.php';
             <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
                     <span class="text-gray-600">小計（<?= $cartCount ?>点）</span>
-                    <span class="font-bold">¥<?= number_format($subtotal) ?></span>
+                    <span class="font-bold"><?= formatPrice($subtotal) ?></span>
                 </div>
                 <?php if ($hasPhysical): ?>
                 <div class="flex justify-between">
@@ -257,7 +257,7 @@ include 'includes/header.php';
             <div class="border-t mt-4 pt-4">
                 <div class="flex justify-between items-center mb-4">
                     <span class="font-bold">合計</span>
-                    <span class="text-xl font-bold text-pop-orange">¥<?= number_format($subtotal) ?></span>
+                    <span class="text-xl font-bold text-pop-orange"><?= formatPrice($subtotal) ?></span>
                 </div>
                 <?php if ($validation['valid']): ?>
                 <a href="/store/checkout.php" class="block w-full btn-cart py-3 rounded font-bold text-center">
@@ -292,7 +292,7 @@ include 'includes/header.php';
                 <?php if ($rec['creator_name']): ?>
                 <p class="text-xs text-gray-500 mb-1"><?= htmlspecialchars($rec['creator_name']) ?></p>
                 <?php endif; ?>
-                <p class="text-pop-orange font-bold">¥<?= number_format($rec['price']) ?></p>
+                <p class="text-pop-orange font-bold"><?= formatPrice($rec['price']) ?></p>
             </div>
         </a>
         <?php endforeach; ?>

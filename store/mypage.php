@@ -198,7 +198,7 @@ include 'includes/header.php';
                         <?= $status['label'] ?>
                     </span>
                     <?php if ($trans['total_amount']): ?>
-                    <p class="text-sm font-bold text-gray-700 mt-1">¥<?= number_format($trans['total_amount']) ?></p>
+                    <p class="text-sm font-bold text-gray-700 mt-1"><?= formatPrice($trans['total_amount']) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -268,7 +268,7 @@ include 'includes/header.php';
                     </p>
                     <div class="flex items-center justify-between mt-1">
                         <p class="text-xs text-gray-400"><?= date('Y/m/d H:i', strtotime($order['created_at'])) ?></p>
-                        <p class="font-bold text-gray-800">¥<?= number_format($order['total'] ?? 0) ?></p>
+                        <p class="font-bold text-gray-800"><?= formatPrice($order['total'] ?? 0) ?></p>
                     </div>
                 </div>
             </div>

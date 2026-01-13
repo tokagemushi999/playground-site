@@ -8,6 +8,7 @@ require_once '../../includes/site-settings.php';
 require_once '../../includes/member-auth.php';
 require_once '../../includes/transactions.php';
 require_once '../../includes/csrf.php';
+require_once '../../includes/formatting.php';
 
 $db = getDB();
 
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messageContent .= "■ 依頼タイトル: {$requestTitle}\n\n";
                 $messageContent .= "■ 依頼内容:\n{$requestDetail}\n\n";
                 if ($requestBudget) {
-                    $messageContent .= "■ 希望予算: ¥" . number_format($requestBudget) . "\n";
+                    $messageContent .= "■ 希望予算: " . formatPrice($requestBudget) . "\n";
                 }
                 if ($requestDeadline) {
                     $messageContent .= "■ 希望納期: {$requestDeadline}\n";
@@ -187,7 +188,7 @@ require_once '../includes/header.php';
             <div>
                 <h2 class="font-bold text-gray-800"><?= htmlspecialchars($service['title']) ?></h2>
                 <p class="text-sm text-gray-500"><?= htmlspecialchars($creator['name'] ?? '') ?></p>
-                <p class="text-green-600 font-bold mt-1">¥<?= number_format($service['base_price']) ?>〜</p>
+                <p class="text-green-600 font-bold mt-1"><?= formatPrice($service['base_price']) ?>〜</p>
             </div>
         </div>
     </div>

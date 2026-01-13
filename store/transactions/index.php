@@ -272,7 +272,7 @@ require_once '../includes/header.php';
                         <?php foreach ($items as $item): ?>
                         <tr class="border-b">
                             <td class="p-2"><?= htmlspecialchars($item['name'] ?? '') ?></td>
-                            <td class="p-2 text-right">¥<?= number_format($item['price'] ?? 0) ?></td>
+                            <td class="p-2 text-right"><?= formatPrice($item['price'] ?? 0) ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -282,15 +282,15 @@ require_once '../includes/header.php';
                 <div class="border-t pt-4 space-y-2">
                     <div class="flex justify-between">
                         <span>小計</span>
-                        <span>¥<?= number_format($latestQuote['subtotal']) ?></span>
+                        <span><?= formatPrice($latestQuote['subtotal']) ?></span>
                     </div>
                     <div class="flex justify-between text-sm text-gray-500">
                         <span>消費税（<?= $latestQuote['tax_rate'] ?>%）</span>
-                        <span>¥<?= number_format($latestQuote['tax_amount']) ?></span>
+                        <span><?= formatPrice($latestQuote['tax_amount']) ?></span>
                     </div>
                     <div class="flex justify-between font-bold text-lg pt-2 border-t">
                         <span>合計</span>
-                        <span class="text-green-600">¥<?= number_format($latestQuote['total_amount']) ?></span>
+                        <span class="text-green-600"><?= formatPrice($latestQuote['total_amount']) ?></span>
                     </div>
                 </div>
                 
@@ -334,7 +334,7 @@ require_once '../includes/header.php';
                 </h3>
                 <p class="text-gray-600 mb-4">見積もりが承諾されました。決済を完了して制作を開始しましょう。</p>
                 <div class="text-2xl font-bold text-green-600 mb-4">
-                    ¥<?= number_format($transaction['total_amount']) ?>
+                    <?= formatPrice($transaction['total_amount']) ?>
                 </div>
                 <a href="/store/transactions/checkout.php?transaction=<?= $transaction['id'] ?>" 
                    class="block w-full py-3 bg-green-500 text-white text-center font-bold rounded-lg hover:bg-green-600 transition">
@@ -529,7 +529,7 @@ require_once '../includes/header.php';
                     <?php if (!empty($transaction['request_budget'])): ?>
                     <div>
                         <span class="text-gray-500">希望予算:</span>
-                        <span class="font-medium">¥<?= number_format($transaction['request_budget']) ?></span>
+                        <span class="font-medium"><?= formatPrice($transaction['request_budget']) ?></span>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($transaction['request_deadline'])): ?>
@@ -552,7 +552,7 @@ require_once '../includes/header.php';
                     <?php if (!empty($transaction['total_amount'])): ?>
                     <div class="flex justify-between">
                         <span class="text-gray-500">金額</span>
-                        <span class="font-bold text-green-600">¥<?= number_format($transaction['total_amount']) ?></span>
+                        <span class="font-bold text-green-600"><?= formatPrice($transaction['total_amount']) ?></span>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -693,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span><?= htmlspecialchars($t['transaction_code']) ?></span>
                         <span><?= date('Y/n/j', strtotime($t['created_at'])) ?></span>
                         <?php if (!empty($t['total_amount'])): ?>
-                        <span class="text-green-600 font-bold">¥<?= number_format($t['total_amount']) ?></span>
+                        <span class="text-green-600 font-bold"><?= formatPrice($t['total_amount']) ?></span>
                         <?php endif; ?>
                         <?php if ($t['unread_count'] > 0): ?>
                         <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">

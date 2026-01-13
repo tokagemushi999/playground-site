@@ -126,7 +126,7 @@ include 'includes/header.php';
                     <?= $item['product_type'] === 'digital' ? 'デジタル' : '物販' ?>
                     × <?= $item['quantity'] ?>点
                 </p>
-                <p class="font-bold text-gray-800">¥<?= number_format($item['subtotal']) ?></p>
+                <p class="font-bold text-gray-800"><?= formatPrice($item['subtotal']) ?></p>
             </div>
         </div>
         <?php endforeach; ?>
@@ -136,17 +136,17 @@ include 'includes/header.php';
     <div class="border-t border-gray-200 mt-4 pt-4 space-y-2 text-sm">
         <div class="flex justify-between text-gray-600">
             <span>小計</span>
-            <span>¥<?= number_format($order['subtotal']) ?></span>
+            <span><?= formatPrice($order['subtotal']) ?></span>
         </div>
         <?php if ($order['shipping_fee'] > 0): ?>
         <div class="flex justify-between text-gray-600">
             <span>送料</span>
-            <span>¥<?= number_format($order['shipping_fee']) ?></span>
+            <span><?= formatPrice($order['shipping_fee']) ?></span>
         </div>
         <?php endif; ?>
         <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
             <span>合計</span>
-            <span class="text-store-primary">¥<?= number_format($order['total']) ?></span>
+            <span class="text-store-primary"><?= formatPrice($order['total']) ?></span>
         </div>
     </div>
 </div>

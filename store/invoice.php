@@ -148,7 +148,7 @@ if ($order['payment_method'] === 'stripe') {
         <!-- 金額 -->
         <div class="bg-gray-100 p-4 rounded mb-6 text-center">
             <p class="text-gray-600 text-sm mb-1">ご利用金額（税込）</p>
-            <p class="text-3xl font-bold">¥<?= number_format($orderTotal) ?>-</p>
+            <p class="text-3xl font-bold"><?= formatPrice($orderTotal) ?>-</p>
         </div>
         
         <!-- 明細 -->
@@ -169,8 +169,8 @@ if ($order['payment_method'] === 'stripe') {
                         <span class="text-xs text-gray-500 ml-1">※</span>
                     </td>
                     <td class="text-center py-2"><?= $item['quantity'] ?></td>
-                    <td class="text-right py-2">¥<?= number_format($item['price']) ?></td>
-                    <td class="text-right py-2">¥<?= number_format($item['subtotal']) ?></td>
+                    <td class="text-right py-2"><?= formatPrice($item['price']) ?></td>
+                    <td class="text-right py-2"><?= formatPrice($item['subtotal']) ?></td>
                 </tr>
                 <?php endforeach; ?>
                 
@@ -181,8 +181,8 @@ if ($order['payment_method'] === 'stripe') {
                         <span class="text-xs text-gray-500 ml-1">※</span>
                     </td>
                     <td class="text-center py-2">1</td>
-                    <td class="text-right py-2">¥<?= number_format($shippingFee) ?></td>
-                    <td class="text-right py-2">¥<?= number_format($shippingFee) ?></td>
+                    <td class="text-right py-2"><?= formatPrice($shippingFee) ?></td>
+                    <td class="text-right py-2"><?= formatPrice($shippingFee) ?></td>
                 </tr>
                 <?php endif; ?>
             </tbody>
@@ -193,29 +193,29 @@ if ($order['payment_method'] === 'stripe') {
             <table class="text-sm">
                 <tr>
                     <td class="text-gray-600 pr-8">小計</td>
-                    <td class="text-right">¥<?= number_format($orderSubtotal) ?></td>
+                    <td class="text-right"><?= formatPrice($orderSubtotal) ?></td>
                 </tr>
                 <?php if ($shippingFee > 0): ?>
                 <tr>
                     <td class="text-gray-600 pr-8">送料</td>
-                    <td class="text-right">¥<?= number_format($shippingFee) ?></td>
+                    <td class="text-right"><?= formatPrice($shippingFee) ?></td>
                 </tr>
                 <?php endif; ?>
                 <tr class="border-t border-gray-300">
                     <td class="text-gray-600 pr-8 pt-2">10%対象</td>
-                    <td class="text-right pt-2">¥<?= number_format($orderTotal) ?></td>
+                    <td class="text-right pt-2"><?= formatPrice($orderTotal) ?></td>
                 </tr>
                 <tr>
                     <td class="text-gray-600 pr-8">（税抜金額）</td>
-                    <td class="text-right">¥<?= number_format($totalWithoutTax) ?></td>
+                    <td class="text-right"><?= formatPrice($totalWithoutTax) ?></td>
                 </tr>
                 <tr>
                     <td class="text-gray-600 pr-8">（消費税10%）</td>
-                    <td class="text-right">¥<?= number_format($totalTax) ?></td>
+                    <td class="text-right"><?= formatPrice($totalTax) ?></td>
                 </tr>
                 <tr class="border-t-2 border-gray-800">
                     <td class="font-bold pr-8 pt-2 text-base">合計</td>
-                    <td class="text-right font-bold pt-2 text-base">¥<?= number_format($orderTotal) ?></td>
+                    <td class="text-right font-bold pt-2 text-base"><?= formatPrice($orderTotal) ?></td>
                 </tr>
             </table>
         </div>

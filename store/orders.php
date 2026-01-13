@@ -127,7 +127,7 @@ include 'includes/header.php';
                     </p>
                     
                     <div class="flex items-center justify-between">
-                        <p class="font-bold text-lg text-gray-800">¥<?= number_format($order['total']) ?></p>
+                        <p class="font-bold text-lg text-gray-800"><?= formatPrice($order['total']) ?></p>
                         <span class="text-store-primary text-sm font-medium">
                             詳細を見る <i class="fas fa-chevron-right ml-1"></i>
                         </span>

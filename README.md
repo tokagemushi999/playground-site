@@ -21,6 +21,8 @@ public_html/
 ├── index.php              # メインページ（タブ切り替え型SPA風）
 ├── article.php            # 記事個別ページ
 ├── creator.php            # クリエイター詳細ページ
+├── creators/              # クリエイター一覧ページ
+│   └── index.php
 ├── manga-viewer.php       # 漫画ビューア（RTL/LTR対応）
 ├── contact.php            # お問い合わせフォーム
 ├── contract-agree.php     # 契約書同意ページ（クリエイター用）
@@ -71,6 +73,21 @@ public_html/
 │       ├── footer.php
 │       └── sidebar.php
 │
+├── creator-dashboard/     # クリエイターダッシュボード
+│   ├── index.php          # ダッシュボード
+│   ├── works.php          # 作品管理
+│   ├── products.php       # 商品管理
+│   ├── services.php       # サービス管理
+│   ├── transactions.php   # 取引管理
+│   ├── transaction-detail.php # 取引詳細
+│   ├── earnings.php       # 売上・支払情報
+│   ├── contracts.php      # 契約書確認
+│   ├── profile.php        # プロフィール設定
+│   ├── settings.php       # 各種設定
+│   └── includes/          # 共通パーツ
+│       ├── header.php
+│       └── footer.php
+│
 ├── store/                 # ECストア
 │   ├── index.php          # 商品一覧
 │   ├── product.php        # 商品詳細
@@ -98,6 +115,15 @@ public_html/
 │   ├── webhook.php        # Stripe Webhook
 │   ├── oauth-start.php    # OAuth認証開始
 │   ├── oauth-callback.php # OAuthコールバック
+│   ├── services/          # サービス一覧・詳細
+│   │   ├── index.php
+│   │   └── detail.php
+│   ├── transactions/      # 取引/見積もり関連
+│   │   ├── index.php
+│   │   ├── request.php
+│   │   ├── checkout.php
+│   │   ├── guest.php
+│   │   └── payment-complete.php
 │   ├── manifest.json      # ストアPWA設定
 │   └── includes/          # ストア共通パーツ
 │       ├── header.php     # ヘッダー（SEOタグ含む）
@@ -122,6 +148,9 @@ public_html/
 │   ├── stripe-php/        # Stripe PHPライブラリ
 │   ├── oauth.php          # OAuth設定
 │   ├── mail.php           # メール送信
+│   ├── transactions.php   # サービス取引共通処理
+│   ├── document-template.php # 領収書/通知書テンプレート
+│   ├── google-drive.php   # Google Drive連携
 │   ├── csrf.php           # CSRF対策
 │   ├── sanitize.php       # サニタイズ処理
 │   ├── defaults.php       # デフォルト値定義
@@ -416,8 +445,8 @@ outputSeoTags($db)
 // 金額の表示フォーマット
 formatPrice($price)
 
-// 数値の表示フォーマット
-formatNumber($value, $default = '-')
+// 数値の表示フォーマット（小数点も指定可能）
+formatNumber($value, $default = '-', $decimals = 0)
 ```
 
 ### includes/gallery-render.php
@@ -491,6 +520,10 @@ getTrackingUrl($carrierCode, $trackingNumber)
 プライベートプロジェクト
 
 ## 更新履歴
+
+### 2026-01-10
+- ストア/取引画面の金額・数値表示を共通フォーマット関数へ統一
+- READMEのディレクトリ構成と共通関数説明を更新
 
 ### 2026-01-09
 - 書類・メールで金額/数値フォーマットを共通ヘルパーに統一

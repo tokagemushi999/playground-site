@@ -15,6 +15,7 @@ require_once '../includes/mail.php';
 require_once '../includes/google-drive.php';
 require_once '../includes/document-template.php';
 require_once '../includes/site-settings.php';
+require_once '../includes/formatting.php';
 
 // Stripeからのリクエストのみ許可
 $payload = @file_get_contents('php://input');
@@ -175,9 +176,9 @@ function processOrderCompletion($db, $orderId, $paymentIntentId) {
             $orderDetail = $stmt->fetch(PDO::FETCH_ASSOC);
             
             // フォーマット済み金額を追加
-            $orderDetail['subtotal_formatted'] = number_format($orderDetail['subtotal']);
-            $orderDetail['shipping_fee_formatted'] = number_format($orderDetail['shipping_fee']);
-            $orderDetail['total_formatted'] = number_format($orderDetail['total']);
+            $orderDetail['subtotal_formatted'] = formatNumber($orderDetail['subtotal'], '0');
+            $orderDetail['shipping_fee_formatted'] = formatNumber($orderDetail['shipping_fee'], '0');
+            $orderDetail['total_formatted'] = formatNumber($orderDetail['total'], '0');
             
             if ($member && $orderItems) {
                 // 購入者にメール送信

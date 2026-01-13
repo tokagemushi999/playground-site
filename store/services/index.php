@@ -288,12 +288,12 @@ try {
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-orange-600 font-bold">
-                                ¥<?= number_format($service['min_price'] ?? $service['base_price']) ?>〜
+                                <?= formatPrice($service['min_price'] ?? $service['base_price']) ?>〜
                             </span>
                             <?php if (!empty($service['avg_rating'])): ?>
                             <span class="text-yellow-400 text-sm">
                                 <i class="fas fa-star"></i>
-                                <?= number_format($service['avg_rating'], 1) ?>
+                                <?= formatNumber($service['avg_rating'], '-', 1) ?>
                             </span>
                             <?php endif; ?>
                         </div>
@@ -363,7 +363,7 @@ try {
                     <div class="flex items-center justify-between pt-3 border-t">
                         <div>
                             <span class="text-lg font-bold text-orange-600">
-                                ¥<?= number_format($service['min_price'] ?? $service['base_price']) ?>
+                                <?= formatPrice($service['min_price'] ?? $service['base_price']) ?>
                             </span>
                             <span class="text-gray-400 text-sm">〜</span>
                         </div>
@@ -371,7 +371,7 @@ try {
                             <?php if (!empty($service['avg_rating'])): ?>
                             <span class="text-yellow-400">
                                 <i class="fas fa-star"></i>
-                                <?= number_format($service['avg_rating'], 1) ?>
+                                <?= formatNumber($service['avg_rating'], '-', 1) ?>
                                 <span class="text-gray-400">(<?= $service['review_count'] ?? 0 ?>)</span>
                             </span>
                             <?php endif; ?>

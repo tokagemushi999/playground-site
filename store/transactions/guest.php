@@ -218,7 +218,7 @@ require_once '../includes/header.php';
                         <?php foreach ($items as $item): ?>
                         <tr class="border-b">
                             <td class="p-2"><?= htmlspecialchars($item['name'] ?? '') ?></td>
-                            <td class="p-2 text-right">¥<?= number_format($item['price'] ?? 0) ?></td>
+                            <td class="p-2 text-right"><?= formatPrice($item['price'] ?? 0) ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -228,7 +228,7 @@ require_once '../includes/header.php';
                 <div class="border-t pt-4 space-y-2">
                     <div class="flex justify-between font-bold text-lg">
                         <span>合計</span>
-                        <span class="text-green-600">¥<?= number_format($latestQuote['total_amount']) ?></span>
+                        <span class="text-green-600"><?= formatPrice($latestQuote['total_amount']) ?></span>
                     </div>
                 </div>
                 
@@ -254,7 +254,7 @@ require_once '../includes/header.php';
                 </h3>
                 <p class="text-gray-600 mb-4">見積もりが承諾されました。決済を完了して制作を開始しましょう。</p>
                 <div class="text-2xl font-bold text-green-600 mb-4">
-                    ¥<?= number_format($transaction['total_amount']) ?>
+                    <?= formatPrice($transaction['total_amount']) ?>
                 </div>
                 <a href="/store/transactions/checkout.php?transaction=<?= $transaction['id'] ?>" 
                    class="block w-full py-3 bg-green-500 text-white text-center font-bold rounded-lg hover:bg-green-600 transition">
@@ -374,7 +374,7 @@ require_once '../includes/header.php';
                     <?php if (!empty($transaction['total_amount'])): ?>
                     <div class="flex justify-between">
                         <span class="text-gray-500">金額</span>
-                        <span class="font-bold text-green-600">¥<?= number_format($transaction['total_amount']) ?></span>
+                        <span class="font-bold text-green-600"><?= formatPrice($transaction['total_amount']) ?></span>
                     </div>
                     <?php endif; ?>
                 </div>

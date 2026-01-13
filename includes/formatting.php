@@ -16,9 +16,9 @@ function formatPrice($price, $default = '-') {
 /**
  * 数値を表示用にフォーマット
  */
-function formatNumber($value, $default = '-') {
+function formatNumber($value, $default = '-', $decimals = 0) {
     if ($value === null || $value === '') {
         return $default;
     }
-    return number_format((float) $value);
+    return number_format((float) $value, $decimals);
 }

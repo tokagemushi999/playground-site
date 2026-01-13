@@ -145,18 +145,18 @@ require_once '../includes/header.php';
             <?php if ($transaction['final_price']): ?>
             <div class="flex justify-between">
                 <span class="text-gray-600">小計</span>
-                <span>¥<?= number_format($transaction['final_price']) ?></span>
+                <span><?= formatPrice($transaction['final_price']) ?></span>
             </div>
             <?php endif; ?>
             <?php if ($transaction['tax_amount']): ?>
             <div class="flex justify-between text-sm">
                 <span class="text-gray-500">消費税</span>
-                <span>¥<?= number_format($transaction['tax_amount']) ?></span>
+                <span><?= formatPrice($transaction['tax_amount']) ?></span>
             </div>
             <?php endif; ?>
             <div class="flex justify-between font-bold text-lg pt-2 border-t">
                 <span>合計</span>
-                <span class="text-green-600">¥<?= number_format($transaction['total_amount']) ?></span>
+                <span class="text-green-600"><?= formatPrice($transaction['total_amount']) ?></span>
             </div>
         </div>
     </div>
@@ -175,7 +175,7 @@ require_once '../includes/header.php';
             <button type="submit" id="submit-button" 
                     class="w-full py-4 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
                 <span id="button-text">
-                    <i class="fas fa-lock mr-2"></i>¥<?= number_format($transaction['total_amount']) ?> を支払う
+                    <i class="fas fa-lock mr-2"></i><?= formatPrice($transaction['total_amount']) ?> を支払う
                 </span>
                 <span id="spinner" class="hidden">
                     <i class="fas fa-spinner fa-spin mr-2"></i>処理中...
