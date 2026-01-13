@@ -510,6 +510,12 @@ getTrackingUrl($carrierCode, $trackingNumber)
 
 ※ 同じ関数名ですが、用途に応じて異なるファイルをインクルードして使い分けます。
 
+### クリエイター認証（includes/creator-auth.php）
+- `getCurrentCreator()` - ログイン中のクリエイター取得
+- `requireCreatorAuth()` - クリエイターダッシュボード用ログイン必須チェック
+- `loginCreator()` / `logoutCreator()` - ログイン/ログアウト処理
+- パスワード設定/リセット用トークン生成・検証をサポート
+
 ## README更新ルール
 
 **このREADMEは、プロジェクトに変更があった際に必ず更新してください。**
@@ -530,6 +536,10 @@ getTrackingUrl($carrierCode, $trackingNumber)
 プライベートプロジェクト
 
 ## 更新履歴
+
+### 2026-01-12
+- クリエイター認証ヘルパーの共通読み込みを整理（includes/creator-auth.php）
+- READMEにクリエイター認証ヘルパーの説明を追加
 
 ### 2026-01-11
 - WebM存在チェックを共通ヘルパーへ統一（includes/image-helper.php）

@@ -3,14 +3,17 @@
  * クリエイター認証ヘルパー
  */
 
+require_once __DIR__ . '/db.php';
+
+// セッション開始（まだ開始していない場合）
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 /**
  * 現在ログイン中のクリエイターを取得
  */
 function getCurrentCreator() {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-    
     if (empty($_SESSION['creator_id'])) {
         return null;
     }
