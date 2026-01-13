@@ -336,7 +336,7 @@ include 'includes/header.php';
                 <?php if ($product['creator_name']): ?>
                 <p class="text-xs text-gray-500 mt-1"><?= htmlspecialchars($product['creator_name']) ?></p>
                 <?php endif; ?>
-                <p class="text-base font-bold text-store-primary mt-1">¥<?= number_format($product['price']) ?></p>
+                <p class="text-base font-bold text-store-primary mt-1"><?= formatPrice($product['price']) ?></p>
             </div>
         </a>
         <?php endforeach; ?>

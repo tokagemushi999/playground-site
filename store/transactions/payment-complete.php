@@ -44,7 +44,7 @@ require_once '../includes/header.php';
             </div>
             <div class="flex justify-between">
                 <span class="text-gray-500">お支払い金額</span>
-                <span class="font-bold text-green-600">¥<?= number_format($transaction['total_amount']) ?></span>
+                <span class="font-bold text-green-600"><?= formatPrice($transaction['total_amount']) ?></span>
             </div>
         </div>
         

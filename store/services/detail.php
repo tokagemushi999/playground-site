@@ -170,12 +170,12 @@ require_once '../includes/header.php';
                 <i class="fas fa-star<?= $i <= round($service['rating_avg']) ? '' : '-o' ?>"></i>
                 <?php endfor; ?>
             </span>
-            <span class="font-bold"><?= number_format($service['rating_avg'], 1) ?></span>
+            <span class="font-bold"><?= formatNumber($service['rating_avg'], '-', 1) ?></span>
             <span class="text-gray-500">(<?= $service['rating_count'] ?? 0 ?>)</span>
         </div>
         <?php endif; ?>
         <?php if (!empty($service['order_count'])): ?>
-        <span class="text-gray-500">販売実績 <?= number_format($service['order_count']) ?>件</span>
+        <span class="text-gray-500">販売実績 <?= formatNumber($service['order_count']) ?>件</span>
         <?php endif; ?>
     </div>
     
@@ -320,7 +320,7 @@ require_once '../includes/header.php';
                 <!-- 価格・購入ボタン -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                     <div class="text-3xl font-bold text-gray-800 mb-2">
-                        ¥<?= number_format($minPrice) ?>
+                        <?= formatPrice($minPrice) ?>
                         <span class="text-sm font-normal text-gray-500">〜</span>
                     </div>
                     
@@ -425,7 +425,7 @@ require_once '../includes/header.php';
                         <?php foreach ($options as $option): ?>
                         <div class="flex justify-between items-center text-sm py-2 border-b last:border-0">
                             <span class="text-gray-700"><?= htmlspecialchars($option['name']) ?></span>
-                            <span class="text-pink-600 font-bold">+ ¥<?= number_format($option['price']) ?></span>
+                            <span class="text-pink-600 font-bold">+ <?= formatPrice($option['price']) ?></span>
                         </div>
                         <?php endforeach; ?>
                     </div>

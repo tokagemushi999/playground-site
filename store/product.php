@@ -177,7 +177,7 @@ include 'includes/header.php';
         <!-- 価格 -->
         <div class="bg-gray-50 rounded-lg p-4">
             <p class="text-2xl font-bold text-pop-orange">
-                ¥<?= number_format($product['price']) ?>
+                <?= formatPrice($product['price']) ?>
                 <span class="text-sm font-normal text-gray-500">（税込）</span>
             </p>
         </div>

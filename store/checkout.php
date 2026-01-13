@@ -360,7 +360,7 @@ include 'includes/header.php';
                             <p class="font-bold text-gray-800 truncate"><?= htmlspecialchars($item['name']) ?></p>
                             <p class="text-sm text-gray-500">数量: <?= $item['quantity'] ?></p>
                         </div>
-                        <p class="font-bold">¥<?= number_format($item['price'] * $item['quantity']) ?></p>
+                        <p class="font-bold"><?= formatPrice($item['price'] * $item['quantity']) ?></p>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -375,13 +375,13 @@ include 'includes/header.php';
                 <div class="space-y-3 mb-4">
                     <div class="flex justify-between text-gray-600">
                         <span>小計</span>
-                        <span>¥<?= number_format($subtotal) ?></span>
+                        <span><?= formatPrice($subtotal) ?></span>
                     </div>
                     
                     <?php if ($hasPhysical): ?>
                     <div class="flex justify-between text-gray-600">
                         <span>送料</span>
-                        <span><?= $shippingFee > 0 ? '¥' . number_format($shippingFee) : ($selectedAddressId ? '¥0' : '未計算') ?></span>
+                        <span><?= $shippingFee > 0 ? formatPrice($shippingFee) : ($selectedAddressId ? formatPrice(0) : '未計算') ?></span>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -389,7 +389,7 @@ include 'includes/header.php';
                 <div class="border-t border-gray-200 pt-4 mb-6">
                     <div class="flex justify-between font-bold text-lg">
                         <span>合計</span>
-                        <span class="text-store-primary">¥<?= number_format($total) ?></span>
+                        <span class="text-store-primary"><?= formatPrice($total) ?></span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">税込</p>
                 </div>

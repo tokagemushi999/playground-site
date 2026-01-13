@@ -197,7 +197,7 @@ $siteName = $settings['site_name'] ?? 'CREATORS PLAYGROUND';
                             × <?= $item['quantity'] ?>
                         </p>
                     </div>
-                    <p class="font-bold">¥<?= number_format($item['subtotal']) ?></p>
+                    <p class="font-bold"><?= formatPrice($item['subtotal']) ?></p>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -206,17 +206,17 @@ $siteName = $settings['site_name'] ?? 'CREATORS PLAYGROUND';
             <div class="border-t border-gray-200 pt-4 space-y-2">
                 <div class="flex justify-between text-gray-600">
                     <span>小計</span>
-                    <span>¥<?= number_format($order['subtotal']) ?></span>
+                    <span><?= formatPrice($order['subtotal']) ?></span>
                 </div>
                 <?php if ($order['shipping_fee'] > 0): ?>
                 <div class="flex justify-between text-gray-600">
                     <span>送料</span>
-                    <span>¥<?= number_format($order['shipping_fee']) ?></span>
+                    <span><?= formatPrice($order['shipping_fee']) ?></span>
                 </div>
                 <?php endif; ?>
                 <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
                     <span>合計</span>
-                    <span class="text-pop-pink">¥<?= number_format($order['total']) ?></span>
+                    <span class="text-pop-pink"><?= formatPrice($order['total']) ?></span>
                 </div>
             </div>
         </div>

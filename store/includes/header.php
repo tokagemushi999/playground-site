@@ -2,6 +2,7 @@
 /**
  * ストア共通ヘッダー（PC:上部ナビ、スマホ:下部ナビ）
  */
+require_once __DIR__ . '/../../includes/formatting.php';
 if (!isset($siteName)) {
     $settings = getSiteSettings();
     $siteName = $settings['site_name'] ?? 'ぷれぐら！PLAYGROUND';

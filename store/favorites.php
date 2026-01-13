@@ -156,7 +156,7 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : (empty($productFavorites) && !
             </a>
             <div class="p-3">
                 <a href="/store/product.php?id=<?= $product['id'] ?>" class="font-bold text-gray-800 text-sm line-clamp-2 hover:text-pop-orange"><?= htmlspecialchars($product['name']) ?></a>
-                <p class="font-bold text-pop-orange mt-1">¥<?= number_format($product['price']) ?></p>
+                <p class="font-bold text-pop-orange mt-1"><?= formatPrice($product['price']) ?></p>
                 <div class="flex gap-2 mt-2">
                     <form method="POST" class="flex-1">
                         <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
@@ -210,7 +210,7 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : (empty($productFavorites) && !
                 </div>
                 <a href="/store/services/detail.php?id=<?= $service['id'] ?>" class="font-bold text-gray-800 text-sm line-clamp-2 hover:text-orange-500"><?= htmlspecialchars($service['title']) ?></a>
                 <div class="flex items-center justify-between mt-3">
-                    <span class="font-bold text-orange-500">¥<?= number_format($service['base_price']) ?>〜</span>
+                    <span class="font-bold text-orange-500"><?= formatPrice($service['base_price']) ?>〜</span>
                     <form method="POST">
                         <input type="hidden" name="service_id" value="<?= $service['id'] ?>">
                         <button type="submit" name="remove_service_favorite" class="text-gray-400 hover:text-red-500" title="削除">
