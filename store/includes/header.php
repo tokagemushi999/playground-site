@@ -17,10 +17,8 @@ $db = getDB();
 $faviconInfo = function_exists('getFaviconInfo') ? getFaviconInfo($db) : ['path' => '/uploads/site/favicon.png', 'type' => 'image/png'];
 
 // OGP用のURL生成
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$baseUrl = $protocol . '://' . $host;
-$currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
+$baseUrl = getBaseUrl();
+$currentUrl = getCurrentUrl();
 
 // OGP画像（商品ページの場合は商品画像、それ以外はサイト設定のOGP画像）
 // WebPはLINE/Twitter等で認識されないため、JPG/PNG版を優先

@@ -20,8 +20,7 @@ $generatedLink = '';
 $settings = getSiteSettings();
 $siteName = $settings['site_name'] ?? 'ショップ';
 $shopName = getSiteSetting($db, 'store_business_name', $siteName);
-$baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') 
-         . '://' . $_SERVER['HTTP_HOST'];
+$baseUrl = getBaseUrl();
 
 // 契約書テンプレート保存
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_template'])) {

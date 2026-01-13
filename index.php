@@ -134,10 +134,9 @@ $collectionsJson = json_encode($collections, JSON_UNESCAPED_UNICODE);
     <!-- OGP (Open Graph Protocol) -->
     <meta property="og:title" content="<?= htmlspecialchars($siteSettings['site_name']) ?>">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="<?= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ?>">
+    <meta property="og:url" content="<?= htmlspecialchars(getCurrentUrl()) ?>">
     <?php 
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http');
-    $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'];
+    $baseUrl = getBaseUrl();
     $ogImageSetting = getSiteSetting($db, 'og_image', '/assets/images/ogp.jpg');
     $ogImageUrl = getOgImageUrl($ogImageSetting, $baseUrl);
     ?>

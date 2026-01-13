@@ -279,9 +279,7 @@ if (!empty($referer)) {
 }
 
 // OGP用のURL生成
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$baseUrl = $protocol . '://' . $host;
+$baseUrl = getBaseUrl();
 $mangaUrl = $baseUrl . '/manga/' . $workId;
 // OGP画像（WebPはLINE/Twitter等で認識されないため、JPG/PNG版を優先）
 $ogImage = getOgImageUrl($work['image'] ?? '', $baseUrl);
