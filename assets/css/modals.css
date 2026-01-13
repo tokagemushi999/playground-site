@@ -1,0 +1,181 @@
+/**
+ * モーダル共通CSS
+ * 使用ページ: index.php, creator.php
+ */
+
+/* ========================================
+   LINEスタンプビューアー
+   ======================================== */
+
+#line-stamp-viewer {
+    touch-action: pan-y;
+}
+
+#line-stamp-image {
+    animation: stampAppear 0.3s ease-out;
+}
+
+@keyframes stampAppear {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* 背景バリエーション - ダーク */
+.line-stamp-bg-dark {
+    background: rgba(0,0,0,0.85);
+}
+.line-stamp-bg-dark .line-stamp-close-icon,
+.line-stamp-bg-dark .line-stamp-nav-icon {
+    color: white;
+}
+.line-stamp-bg-dark .line-stamp-counter-style {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+.line-stamp-bg-dark #line-stamp-image {
+    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.5));
+}
+
+/* 背景バリエーション - ライト */
+.line-stamp-bg-light {
+    background: rgba(245,245,245,0.98);
+}
+.line-stamp-bg-light .line-stamp-close-icon,
+.line-stamp-bg-light .line-stamp-nav-icon {
+    color: #333;
+}
+.line-stamp-bg-light .line-stamp-counter-style {
+    background: rgba(0,0,0,0.1);
+    color: #333;
+}
+.line-stamp-bg-light button {
+    background: rgba(0,0,0,0.1);
+}
+.line-stamp-bg-light button:hover {
+    background: rgba(0,0,0,0.2);
+}
+.line-stamp-bg-light #line-stamp-image {
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.15));
+}
+
+/* 背景バリエーション - チェック */
+.line-stamp-bg-check {
+    background: repeating-conic-gradient(#e0e0e0 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+}
+.line-stamp-bg-check .line-stamp-close-icon,
+.line-stamp-bg-check .line-stamp-nav-icon {
+    color: #333;
+}
+.line-stamp-bg-check .line-stamp-counter-style {
+    background: rgba(0,0,0,0.6);
+    color: white;
+}
+.line-stamp-bg-check button {
+    background: rgba(255,255,255,0.8);
+}
+.line-stamp-bg-check button:hover {
+    background: rgba(255,255,255,0.95);
+}
+.line-stamp-bg-check #line-stamp-image {
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.2));
+}
+
+/* 背景バリエーション - LINEグリーン */
+.line-stamp-bg-green {
+    background: #06C755;
+}
+.line-stamp-bg-green .line-stamp-close-icon,
+.line-stamp-bg-green .line-stamp-nav-icon {
+    color: white;
+}
+.line-stamp-bg-green .line-stamp-counter-style {
+    background: rgba(0,0,0,0.2);
+    color: white;
+}
+.line-stamp-bg-green button {
+    background: rgba(255,255,255,0.2);
+}
+.line-stamp-bg-green button:hover {
+    background: rgba(255,255,255,0.3);
+}
+.line-stamp-bg-green #line-stamp-image {
+    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+}
+
+/* LINEスタンプサムネイル - 軽量表示 */
+.line-stamp-thumb {
+    background: #f9f9f9;
+}
+.line-stamp-item {
+    aspect-ratio: 1;
+    padding: 4px;
+    border-radius: 8px;
+    background: #fff;
+}
+.line-stamp-item:active {
+    background: #f0f0f0;
+}
+@media (min-width: 640px) {
+    .line-stamp-item:hover {
+        background: #f5f5f5;
+    }
+}
+
+/* ========================================
+   ステッカーモーダル
+   ======================================== */
+
+.sticker-modal-container {
+    padding: env(safe-area-inset-top, 8px) env(safe-area-inset-right, 8px) env(safe-area-inset-bottom, 8px) env(safe-area-inset-left, 8px);
+}
+.sticker-modal-content {
+    max-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px);
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px);
+}
+@media (min-width: 640px) {
+    .sticker-modal-container {
+        padding: 16px;
+    }
+    .sticker-modal-content {
+        max-height: 90vh;
+        max-height: 90dvh;
+    }
+}
+
+/* ステッカー詳細モーダル */
+.sticker-detail-container {
+    padding: env(safe-area-inset-top, 8px) env(safe-area-inset-right, 8px) env(safe-area-inset-bottom, 8px) env(safe-area-inset-left, 8px);
+}
+.sticker-detail-content {
+    max-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px);
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px);
+}
+@media (min-width: 640px) {
+    .sticker-detail-container {
+        padding: 16px;
+    }
+    .sticker-detail-content {
+        max-height: 90vh;
+        max-height: 90dvh;
+    }
+}
+
+/* ========================================
+   ステッカーカード3D裏返し
+   ======================================== */
+
+.sticker-card {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+.sticker-card-front,
+.sticker-card-back {
+    backface-visibility: hidden;
+}
+.sticker-card-back {
+    transform: rotateY(180deg);
+}
+.sticker-card.flipped {
+    transform: rotateY(180deg);
+}

@@ -1,0 +1,25 @@
+{
+    "name": "ぷれぐら！ BACKYARD",
+    "short_name": "BACKYARD",
+    "description": "ぷれぐら！管理画面",
+    "start_url": "/admin/",
+    "scope": "/admin/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#FBBF24",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/uploads/site/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/uploads/site/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "name": "ぷれぐら！STORE",
+    "short_name": "ぷれぐら！STORE",
+    "description": "ぷれぐら！のオンラインストア",
+    "start_url": "/store/",
+    "scope": "/store/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#FF6B35",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/uploads/site/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/uploads/site/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

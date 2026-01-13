@@ -1,0 +1,45 @@
+# ============================================
+# 管理画面セキュリティ設定
+# ============================================
+
+# デフォルトのインデックスファイル
+DirectoryIndex index.php
+
+# ベーシック認証（有効にする場合はコメントを外す）
+# AuthType Basic
+# AuthName "Admin Area - Authorization Required"
+# AuthUserFile /home/tokagemushi/.htpasswd
+# Require valid-user
+
+# IP制限（特定IPのみ許可する場合はコメントを外す）
+# <RequireAll>
+#     Require ip 123.456.789.0
+#     Require ip 111.222.333.0
+# </RequireAll>
+
+# セキュリティヘッダー
+<IfModule mod_headers.c>
+    # XSS対策
+    Header set X-XSS-Protection "1; mode=block"
+    # クリックジャッキング対策
+    Header set X-Frame-Options "SAMEORIGIN"
+    # MIMEタイプスニッフィング対策
+    Header set X-Content-Type-Options "nosniff"
+    # リファラーポリシー
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# PHPセッション設定
+<IfModule mod_php.c>
+    php_flag session.cookie_httponly On
+    php_flag session.cookie_secure On
+    php_value session.cookie_samesite Strict
+</IfModule>
+
+# ディレクトリリスティング無効化
+Options -Indexes
+
+# 設定ファイルへのアクセス拒否
+<FilesMatch "\.(ini|log|conf|sql)$">
+    Require all denied
+</FilesMatch>
