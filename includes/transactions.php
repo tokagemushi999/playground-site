@@ -5,6 +5,7 @@
 
 // メール送信関数が必要
 require_once __DIR__ . '/mail.php';
+require_once __DIR__ . '/formatting.php';
 
 /**
  * 取引コード生成
@@ -533,7 +534,7 @@ function sendTransactionEmail($transactionId, $type, $recipientType, $customData
             $body .= "決済が完了しました。制作を開始してください。\n\n";
             $body .= "■ 取引コード: {$transaction['transaction_code']}\n";
             $body .= "■ サービス: {$transaction['service_title']}\n";
-            $body .= "■ 金額: ¥" . number_format($transaction['total_amount']) . "\n\n";
+            $body .= "■ 金額: " . formatPrice($transaction['total_amount']) . "\n\n";
             break;
             
         default:
@@ -700,7 +701,7 @@ function refundTransaction($transactionId, $refundAmount = null, $reason = '') {
         $stmt->execute([$finalAmount, $refund->id, $transactionId]);
         
         // システムメッセージ追加
-        $message = "【返金処理完了】\n返金額: ¥" . number_format($finalAmount);
+        $message = "【返金処理完了】\n返金額: " . formatPrice($finalAmount);
         if ($reason) {
             $message .= "\n理由: {$reason}";
         }

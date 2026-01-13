@@ -5,6 +5,7 @@
 session_start();
 require_once '../includes/db.php';
 require_once '../includes/creator-auth.php';
+require_once '../includes/formatting.php';
 require_once '../includes/site-settings.php';
 
 $creator = requireCreatorAuth();
@@ -94,7 +95,7 @@ require_once 'includes/header.php';
                 <?php if ($productCommission['per_item'] > 0): ?>
                 <div class="flex justify-between">
                     <span class="text-gray-600">1件あたり</span>
-                    <span class="font-bold text-gray-800">¥<?= number_format($productCommission['per_item']) ?></span>
+                    <span class="font-bold text-gray-800"><?= formatPrice($productCommission['per_item']) ?></span>
                 </div>
                 <?php endif; ?>
             </div>
@@ -112,7 +113,7 @@ require_once 'includes/header.php';
                 <?php if ($serviceCommission['per_item'] > 0): ?>
                 <div class="flex justify-between">
                     <span class="text-gray-600">1件あたり</span>
-                    <span class="font-bold text-gray-800">¥<?= number_format($serviceCommission['per_item']) ?></span>
+                    <span class="font-bold text-gray-800"><?= formatPrice($serviceCommission['per_item']) ?></span>
                 </div>
                 <?php endif; ?>
             </div>
