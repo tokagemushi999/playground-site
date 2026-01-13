@@ -83,9 +83,7 @@ $typeColors = [
 $type = $article['article_type'] ?? 'blog';
 
 // OGP用のURL生成
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$baseUrl = $protocol . '://' . $host;
+$baseUrl = getBaseUrl();
 $articleUrl = !empty($article['slug']) 
     ? $baseUrl . '/article/' . $article['slug']
     : $baseUrl . '/article.php?id=' . $article['id'];
@@ -452,7 +450,7 @@ $ogImage = getOgImageUrl($article['image'] ?? '', $baseUrl);
                     <i class="fas fa-link"></i>
                 </button>
                 <!-- X -->
-                <a href="https://twitter.com/intent/tweet?url=<?= urlencode('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>&text=<?= urlencode($article['title']) ?>" 
+                <a href="https://twitter.com/intent/tweet?url=<?= urlencode($articleUrl) ?>&text=<?= urlencode($article['title']) ?>" 
                     target="_blank" 
                     class="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -460,13 +458,13 @@ $ogImage = getOgImageUrl($article['image'] ?? '', $baseUrl);
                     </svg>
                 </a>
                 <!-- Facebook -->
-                <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>" 
+                <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($articleUrl) ?>" 
                     target="_blank"
                     class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition">
                     <i class="fab fa-facebook-f"></i>
                 </a>
                 <!-- LINE -->
-                <a href="https://line.me/R/msg/text/?<?= urlencode($article['title'] . ' ' . 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>" 
+                <a href="https://line.me/R/msg/text/?<?= urlencode($article['title'] . ' ' . $articleUrl) ?>" 
                     target="_blank"
                     class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition">
                     <i class="fab fa-line"></i>

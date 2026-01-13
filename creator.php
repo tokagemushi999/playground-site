@@ -182,9 +182,7 @@ $typeLabels = [
 ];
 
 // OGP用のURL生成
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$baseUrl = $protocol . '://' . $host;
+$baseUrl = getBaseUrl();
 $creatorUrl = !empty($creator['slug']) 
     ? $baseUrl . '/creator/' . $creator['slug']
     : $baseUrl . '/creator.php?id=' . $creator['id'];

@@ -25,8 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_invite'])) {
     
     if ($inviteCreator && !empty($inviteCreator['email'])) {
         $token = generatePasswordSetToken($db, $creatorId);
-        $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') 
-                 . '://' . $_SERVER['HTTP_HOST'];
+        $baseUrl = getBaseUrl();
         $inviteUrl = $baseUrl . '/creator-dashboard/set-password.php?token=' . $token;
         
         // メール送信

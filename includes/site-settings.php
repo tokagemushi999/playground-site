@@ -37,6 +37,21 @@ function normalizeSiteAssetPath($path) {
     return '/' . ltrim($path, '/');
 }
 
+function getBaseUrl($fallbackHost = 'localhost') {
+    $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $protocol = $isHttps ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? $fallbackHost;
+
+    return $protocol . '://' . $host;
+}
+
+function getCurrentUrl($fallbackHost = 'localhost') {
+    $baseUrl = getBaseUrl($fallbackHost);
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+
+    return $baseUrl . $requestUri;
+}
+
 function getFaviconInfo($db, $default = '/favicon.png') {
     $favicon = getSiteSetting($db, 'favicon', $default);
     $faviconPath = normalizeSiteAssetPath($favicon ?: $default);
