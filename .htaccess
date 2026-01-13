@@ -1,0 +1,78 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # HTTPSへリダイレクト（本番環境で有効化する場合）
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # サイトマップ（動的生成）
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
+    
+    # 既存のファイルやディレクトリは除外
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # 記事のスラッグURL: /article/slug-name → article.php?slug=slug-name
+    RewriteRule ^article/([a-zA-Z0-9\-]+)/?$ article.php?slug=$1 [L,QSA]
+    
+    # クリエイターのスラッグURL: /creator/slug-name → creator.php?slug=slug-name  
+    RewriteRule ^creator/([a-zA-Z0-9\-]+)/?$ creator.php?slug=$1 [L,QSA]
+    
+    # 漫画ビューア: /manga/id → manga-viewer.php?id=id
+    RewriteRule ^manga/([0-9]+)/?$ manga-viewer.php?id=$1 [L,QSA]
+    
+    # サービス詳細: /store/services/id → store/services/detail.php?id=id
+    RewriteRule ^store/services/([0-9]+)/?$ store/services/detail.php?id=$1 [L,QSA]
+    # サービス詳細（スラッグ）: /store/services/slug → store/services/detail.php?slug=slug
+    RewriteRule ^store/services/([a-zA-Z0-9\-]+)/?$ store/services/detail.php?slug=$1 [L,QSA]
+    
+    # ログアウト: /logout → store/logout.php
+    RewriteRule ^logout/?$ store/logout.php [L,QSA]
+    
+    # 取引詳細: /store/transactions/CODE → store/transactions/index.php?code=CODE
+    RewriteRule ^store/transactions/([A-Z0-9\-]+)/?$ store/transactions/index.php?code=$1 [L,QSA]
+    
+    # クリエイター一覧: /creators/ → creators/index.php
+    RewriteRule ^creators/?$ creators/index.php [L,QSA]
+    
+    # 見積もり依頼: /store/request/SERVICE_ID → store/transactions/request.php?service=ID
+    RewriteRule ^store/request/([0-9]+)/?$ store/transactions/request.php?service=$1 [L,QSA]
+    
+    # 404エラーページ（オプション）
+    # ErrorDocument 404 /404.php
+</IfModule>
+
+# セキュリティ設定
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# キャッシュ制御
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # 画像
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    
+    # CSS, JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    
+    # フォント
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    
+    # HTML（キャッシュしない）
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# GZIP圧縮
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+</IfModule>

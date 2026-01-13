@@ -1,0 +1,24 @@
+# robots.txt for tokagemushi.jp
+
+User-agent: *
+Allow: /
+
+# Admin area - no crawling
+Disallow: /admin/
+Disallow: /includes/
+
+# Store internal pages
+Disallow: /store/checkout.php
+Disallow: /store/cart.php
+Disallow: /store/mypage.php
+Disallow: /store/profile.php
+Disallow: /store/orders.php
+Disallow: /store/address.php
+Disallow: /store/oauth-*
+Disallow: /store/webhook.php
+
+# API
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://tokagemushi.jp/sitemap.xml
