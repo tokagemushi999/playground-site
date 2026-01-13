@@ -5,6 +5,7 @@
 session_start();
 require_once '../includes/db.php';
 require_once '../includes/creator-auth.php';
+require_once '../includes/formatting.php';
 
 $creator = requireCreatorAuth();
 $db = getDB();
@@ -239,11 +240,11 @@ require_once 'includes/header.php';
         <span class="font-bold text-gray-700"><i class="fas fa-file-contract mr-1"></i>現在の契約条件:</span>
         <span class="px-3 py-1 bg-white rounded-full text-blue-700">
             <i class="fas fa-box mr-1"></i>商品手数料 <?= $productCommissionRate ?>%
-            <?= $productCommissionPerItem > 0 ? "+ ¥" . number_format($productCommissionPerItem) . "/件" : "" ?>
+            <?= $productCommissionPerItem > 0 ? "+ " . formatPrice($productCommissionPerItem) . "/件" : "" ?>
         </span>
         <span class="px-3 py-1 bg-white rounded-full text-purple-700">
             <i class="fas fa-paint-brush mr-1"></i>サービス手数料 <?= $serviceCommissionRate ?>%
-            <?= $serviceCommissionPerItem > 0 ? "+ ¥" . number_format($serviceCommissionPerItem) . "/件" : "" ?>
+            <?= $serviceCommissionPerItem > 0 ? "+ " . formatPrice($serviceCommissionPerItem) . "/件" : "" ?>
         </span>
         <?php if ($withholdingTaxRequired): ?>
         <span class="px-3 py-1 bg-orange-100 rounded-full text-orange-700">
@@ -268,21 +269,21 @@ require_once 'includes/header.php';
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-gray-50 rounded-lg p-4 text-center">
             <p class="text-gray-500 text-sm">総売上</p>
-            <p class="text-2xl font-bold text-gray-800">¥<?= number_format($monthDetail['total_sales'] ?? 0) ?></p>
+            <p class="text-2xl font-bold text-gray-800"><?= formatPrice($monthDetail['total_sales'] ?? 0) ?></p>
         </div>
         <div class="bg-red-50 rounded-lg p-4 text-center">
             <p class="text-gray-500 text-sm">手数料</p>
-            <p class="text-2xl font-bold text-red-600">-¥<?= number_format($monthDetail['total_commission'] ?? 0) ?></p>
+            <p class="text-2xl font-bold text-red-600">-<?= formatPrice($monthDetail['total_commission'] ?? 0) ?></p>
         </div>
         <?php if ($withholdingTaxRequired): ?>
         <div class="bg-orange-50 rounded-lg p-4 text-center">
             <p class="text-gray-500 text-sm">源泉徴収</p>
-            <p class="text-2xl font-bold text-orange-600">-¥<?= number_format($monthDetail['withholding_tax'] ?? 0) ?></p>
+            <p class="text-2xl font-bold text-orange-600">-<?= formatPrice($monthDetail['withholding_tax'] ?? 0) ?></p>
         </div>
         <?php endif; ?>
         <div class="bg-green-50 rounded-lg p-4 text-center">
             <p class="text-gray-500 text-sm">振込予定額</p>
-            <p class="text-2xl font-bold text-green-600">¥<?= number_format($monthDetail['payout'] ?? 0) ?></p>
+            <p class="text-2xl font-bold text-green-600"><?= formatPrice($monthDetail['payout'] ?? 0) ?></p>
         </div>
     </div>
     
@@ -306,7 +307,7 @@ require_once 'includes/header.php';
                         <td class="px-4 py-2 font-mono text-xs"><?= htmlspecialchars($order['order_number']) ?></td>
                         <td class="px-4 py-2 text-gray-600"><?= date('m/d H:i', strtotime($order['created_at'])) ?></td>
                         <td class="px-4 py-2"><?= htmlspecialchars(mb_substr($order['items'], 0, 40)) ?><?= mb_strlen($order['items']) > 40 ? '...' : '' ?></td>
-                        <td class="px-4 py-2 text-right font-bold">¥<?= number_format($order['subtotal']) ?></td>
+                        <td class="px-4 py-2 text-right font-bold"><?= formatPrice($order['subtotal']) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -341,7 +342,7 @@ require_once 'includes/header.php';
                                 <?= $tx['status'] === 'completed' ? '完了' : '進行中' ?>
                             </span>
                         </td>
-                        <td class="px-4 py-2 text-right font-bold">¥<?= number_format($tx['total_amount']) ?></td>
+                        <td class="px-4 py-2 text-right font-bold"><?= formatPrice($tx['total_amount']) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -363,27 +364,27 @@ require_once 'includes/header.php';
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <p class="text-gray-500 text-sm mb-1">年間総売上</p>
-        <p class="text-2xl font-bold text-gray-800">¥<?= number_format($yearlyTotal['total_sales']) ?></p>
+        <p class="text-2xl font-bold text-gray-800"><?= formatPrice($yearlyTotal['total_sales']) ?></p>
         <div class="flex gap-2 text-xs mt-2">
-            <span class="text-blue-600">商品 ¥<?= number_format($yearlyTotal['product_sales']) ?></span>
-            <span class="text-purple-600">サービス ¥<?= number_format($yearlyTotal['service_sales']) ?></span>
+            <span class="text-blue-600">商品 <?= formatPrice($yearlyTotal['product_sales']) ?></span>
+            <span class="text-purple-600">サービス <?= formatPrice($yearlyTotal['service_sales']) ?></span>
         </div>
     </div>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <p class="text-gray-500 text-sm mb-1">年間手数料</p>
-        <p class="text-2xl font-bold text-red-600">-¥<?= number_format($yearlyTotal['total_commission']) ?></p>
+        <p class="text-2xl font-bold text-red-600">-<?= formatPrice($yearlyTotal['total_commission']) ?></p>
         <p class="text-xs text-gray-400 mt-2">売上の<?= round($yearlyTotal['total_sales'] > 0 ? $yearlyTotal['total_commission'] / $yearlyTotal['total_sales'] * 100 : 0, 1) ?>%</p>
     </div>
     <?php if ($withholdingTaxRequired): ?>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <p class="text-gray-500 text-sm mb-1">年間源泉徴収</p>
-        <p class="text-2xl font-bold text-orange-600">-¥<?= number_format($yearlyTotal['withholding_tax']) ?></p>
+        <p class="text-2xl font-bold text-orange-600">-<?= formatPrice($yearlyTotal['withholding_tax']) ?></p>
         <p class="text-xs text-gray-400 mt-2">確定申告で精算可能</p>
     </div>
     <?php endif; ?>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <p class="text-gray-500 text-sm mb-1">年間振込額</p>
-        <p class="text-2xl font-bold text-green-600">¥<?= number_format($yearlyTotal['payout']) ?></p>
+        <p class="text-2xl font-bold text-green-600"><?= formatPrice($yearlyTotal['payout']) ?></p>
         <p class="text-xs text-gray-400 mt-2">手取り金額</p>
     </div>
 </div>
@@ -458,20 +459,20 @@ require_once 'includes/header.php';
                     <?= $data['total_sales'] > 0 ? "onclick=\"location.href='?year={$targetYear}&month={$month}'\"" : '' ?>>
                     <td class="px-4 py-3 font-bold text-gray-800"><?= $month ?>月</td>
                     <td class="px-4 py-3 text-right">
-                        <span class="font-bold text-gray-800">¥<?= number_format($data['total_sales']) ?></span>
+                        <span class="font-bold text-gray-800"><?= formatPrice($data['total_sales']) ?></span>
                         <?php if ($data['product_sales'] > 0 || $data['service_sales'] > 0): ?>
                         <div class="text-xs text-gray-400">
-                            <?php if ($data['product_sales'] > 0): ?>商品 ¥<?= number_format($data['product_sales']) ?><?php endif; ?>
+                            <?php if ($data['product_sales'] > 0): ?>商品 <?= formatPrice($data['product_sales']) ?><?php endif; ?>
                             <?php if ($data['product_sales'] > 0 && $data['service_sales'] > 0): ?> / <?php endif; ?>
-                            <?php if ($data['service_sales'] > 0): ?>サービス ¥<?= number_format($data['service_sales']) ?><?php endif; ?>
+                            <?php if ($data['service_sales'] > 0): ?>サービス <?= formatPrice($data['service_sales']) ?><?php endif; ?>
                         </div>
                         <?php endif; ?>
                     </td>
-                    <td class="px-4 py-3 text-right text-red-600">-¥<?= number_format($data['total_commission']) ?></td>
+                    <td class="px-4 py-3 text-right text-red-600">-<?= formatPrice($data['total_commission']) ?></td>
                     <?php if ($withholdingTaxRequired): ?>
-                    <td class="px-4 py-3 text-right text-orange-600">-¥<?= number_format($data['withholding_tax']) ?></td>
+                    <td class="px-4 py-3 text-right text-orange-600">-<?= formatPrice($data['withholding_tax']) ?></td>
                     <?php endif; ?>
-                    <td class="px-4 py-3 text-right font-bold text-green-600">¥<?= number_format($data['payout']) ?></td>
+                    <td class="px-4 py-3 text-right font-bold text-green-600"><?= formatPrice($data['payout']) ?></td>
                     <td class="px-4 py-3 text-center">
                         <?php if ($data['total_sales'] > 0): ?>
                         <i class="fas fa-chevron-right text-gray-400"></i>
@@ -481,12 +482,12 @@ require_once 'includes/header.php';
                 <?php endforeach; ?>
                 <tr class="bg-gray-50 font-bold">
                     <td class="px-4 py-3 text-gray-800">年間合計</td>
-                    <td class="px-4 py-3 text-right text-gray-800">¥<?= number_format($yearlyTotal['total_sales']) ?></td>
-                    <td class="px-4 py-3 text-right text-red-600">-¥<?= number_format($yearlyTotal['total_commission']) ?></td>
+                    <td class="px-4 py-3 text-right text-gray-800"><?= formatPrice($yearlyTotal['total_sales']) ?></td>
+                    <td class="px-4 py-3 text-right text-red-600">-<?= formatPrice($yearlyTotal['total_commission']) ?></td>
                     <?php if ($withholdingTaxRequired): ?>
-                    <td class="px-4 py-3 text-right text-orange-600">-¥<?= number_format($yearlyTotal['withholding_tax']) ?></td>
+                    <td class="px-4 py-3 text-right text-orange-600">-<?= formatPrice($yearlyTotal['withholding_tax']) ?></td>
                     <?php endif; ?>
-                    <td class="px-4 py-3 text-right text-green-600">¥<?= number_format($yearlyTotal['payout']) ?></td>
+                    <td class="px-4 py-3 text-right text-green-600"><?= formatPrice($yearlyTotal['payout']) ?></td>
                     <td class="px-4 py-3"></td>
                 </tr>
             </tbody>
@@ -523,9 +524,9 @@ require_once 'includes/header.php';
                         <span class="text-purple-600"><i class="fas fa-paint-brush mr-1"></i>サービス</span>
                         <?php endif; ?>
                     </td>
-                    <td class="px-4 py-3 text-right">¥<?= number_format($payment['gross_sales']) ?></td>
-                    <td class="px-4 py-3 text-right text-red-600">-¥<?= number_format($payment['commission_amount']) ?></td>
-                    <td class="px-4 py-3 text-right font-bold text-green-600">¥<?= number_format($payment['net_payment']) ?></td>
+                    <td class="px-4 py-3 text-right"><?= formatPrice($payment['gross_sales']) ?></td>
+                    <td class="px-4 py-3 text-right text-red-600">-<?= formatPrice($payment['commission_amount']) ?></td>
+                    <td class="px-4 py-3 text-right font-bold text-green-600"><?= formatPrice($payment['net_payment']) ?></td>
                     <td class="px-4 py-3 text-center">
                         <span class="px-2 py-1 rounded text-xs font-bold 
                             <?= $payment['status'] === 'paid' ? 'bg-green-100 text-green-700' : 
