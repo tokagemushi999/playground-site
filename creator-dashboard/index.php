@@ -6,6 +6,7 @@ session_start();
 require_once '../includes/db.php';
 require_once '../includes/csrf.php';
 require_once '../includes/creator-auth.php';
+require_once '../includes/formatting.php';
 require_once '../includes/transactions.php';
 
 $creator = requireCreatorAuth();
@@ -117,15 +118,15 @@ require_once 'includes/header.php';
 <!-- 今月の売上サマリー -->
 <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4 lg:p-6 text-white mb-6">
     <p class="text-sm text-green-100 mb-1">今月の売上（<?= date('n') ?>月）</p>
-    <p class="text-3xl lg:text-4xl font-bold">¥<?= number_format($totalEarningsMonth) ?></p>
+    <p class="text-3xl lg:text-4xl font-bold"><?= formatPrice($totalEarningsMonth) ?></p>
     <div class="flex gap-6 mt-3 text-sm">
         <div>
             <span class="text-green-200">サービス:</span>
-            <span class="font-bold">¥<?= number_format($stats['earnings_service_month']) ?></span>
+            <span class="font-bold"><?= formatPrice($stats['earnings_service_month']) ?></span>
         </div>
         <div>
             <span class="text-green-200">商品:</span>
-            <span class="font-bold">¥<?= number_format($stats['earnings_product_month']) ?></span>
+            <span class="font-bold"><?= formatPrice($stats['earnings_product_month']) ?></span>
         </div>
     </div>
 </div>
@@ -249,7 +250,7 @@ require_once 'includes/header.php';
                             #<?= htmlspecialchars($order['order_number']) ?> • <?= date('n/j H:i', strtotime($order['created_at'])) ?>
                         </p>
                     </div>
-                    <span class="text-green-600 font-bold text-sm">¥<?= number_format($order['total_amount']) ?></span>
+                    <span class="text-green-600 font-bold text-sm"><?= formatPrice($order['total_amount']) ?></span>
                 </div>
             </div>
             <?php endforeach; ?>
