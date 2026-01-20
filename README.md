@@ -393,6 +393,7 @@ php -l includes/admin-ui.php
 php -l includes/formatting.php
 php -l includes/stripe-config.php
 php -l includes/transactions.php
+php -l creator-dashboard/index.php
 php -l creator-dashboard/services.php
 php -l creator-dashboard/contracts.php
 php -l creator-dashboard/earnings.php
@@ -539,6 +540,10 @@ getTrackingUrl($carrierCode, $trackingNumber)
 プライベートプロジェクト
 
 ## 更新履歴
+
+### 2026-01-14
+- クリエイターダッシュボードの売上表示を共通フォーマット関数へ統一
+- READMEのテストコマンドを更新
 
 ### 2026-01-13
 - クリエイターダッシュボードの売上/契約画面で金額表示を共通フォーマット関数へ統一
