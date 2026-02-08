@@ -8,6 +8,7 @@ require_once '../includes/auth.php';
 require_once '../includes/csrf.php';
 require_once '../includes/site-settings.php';
 require_once '../includes/transactions.php';
+require_once '../includes/admin-ui.php';
 requireAuth();
 
 $db = getDB();
