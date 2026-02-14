@@ -407,7 +407,7 @@
                 <p class="text-sm text-gray-600 mb-4"><i class="fas fa-user mr-1"></i>${creatorName}</p>
                 ${sticker.description ? `<p class="text-sm text-gray-600 text-center mb-4 max-w-md">${sticker.description}</p>` : ''}
                 ${hasBackImage ? `
-                <button onclick="flipStickerCard()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-full font-bold transition-all hover:scale-105 shadow-lg">
+                <button onclick="flipStickerCard()" class="text-white px-6 py-2 rounded-full font-bold transition-all hover:scale-105 shadow-lg" style="background:#0ea5e9">
                     <i class="fas fa-sync-alt mr-2"></i>裏面を見る
                 </button>
                 ` : ''}
