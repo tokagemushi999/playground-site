@@ -334,7 +334,7 @@ function renderGalleryCollectionItem($col, $aspectClass, $itemClass) {
         }
     }
     
-    $badgeClass = $hasLineStamp ? 'bg-[#06C755]' : 'bg-gray-800/70 backdrop-blur-sm';
+    $badgeClass = $hasLineStamp ? 'bg-[#06C755]' : 'bg-sky-500';
     $badgeIcon = $hasLineStamp ? '<i class="fab fa-line"></i>' : '<i class="fas fa-layer-group"></i>';
     
     ob_start();
