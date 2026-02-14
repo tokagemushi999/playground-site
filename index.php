@@ -832,15 +832,12 @@ $collectionsJson = json_encode($collections, JSON_UNESCAPED_UNICODE);
         </div>
 
         <div id="tab-lab" class="tab-content">
-            <section class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-lab-green/30 pb-6">
-                    <div>
-                        <h2 class="font-code text-6xl md:text-8xl text-lab-green mb-2 tracking-widest animate-pulse">THE LAB</h2>
-                        <p class="font-code text-white text-xl tracking-wider">> EXPERIMENTAL_TOOLS_</p>
-                    </div>
-                    <div class="text-gray-500 font-code text-sm mt-4 md:mt-0 text-right">System: Offline<br>Mode: Standby</div>
+            <section class="max-w-7xl mx-auto px-6 py-32">
+                <div class="text-center">
+                    <h2 class="font-code text-6xl md:text-8xl text-lab-green mb-6 tracking-widest animate-pulse">THE LAB</h2>
+                    <p class="font-code text-lab-green/60 text-2xl md:text-3xl tracking-wider mb-4">COMING SOON</p>
+                    <p class="font-code text-gray-600 text-sm tracking-wide">Something is brewing...</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="lab-grid"></div>
             </section>
         </div>
 
