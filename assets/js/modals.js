@@ -259,7 +259,7 @@
                 modalHeader.className = 'bg-[#06C755] px-3 py-2 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0';
                 modalIcon.innerHTML = '<i class="fab fa-line text-white text-sm sm:text-base"></i>';
             } else {
-                modalHeader.className = 'bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-2 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0';
+                modalHeader.className = 'bg-sky-500 px-3 py-2 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0';
                 modalIcon.innerHTML = '<i class="fas fa-layer-group text-white text-sm sm:text-base"></i>';
             }
         }
