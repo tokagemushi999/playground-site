@@ -1,0 +1,6 @@
+uploads/
+vendor/
+agency_analyzer/cache_talent/
+*.log
+.DS_Store
+agency_analyzer/agency_analyzer_config.php
