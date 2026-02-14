@@ -256,7 +256,8 @@
         // ヘッダーの色を変更
         if (modalHeader && modalIcon) {
             if (hasLineStamp) {
-                modalHeader.className = 'bg-[#06C755] px-3 py-2 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0';
+                modalHeader.className = 'px-3 py-2 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0';
+                modalHeader.style.background = '#06C755';
                 modalIcon.innerHTML = '<i class="fab fa-line text-white text-sm sm:text-base"></i>';
             } else {
                 modalHeader.className = 'px-3 py-2 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0';
