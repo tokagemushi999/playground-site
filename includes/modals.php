@@ -21,7 +21,7 @@
 <div id="sticker-group-modal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center sticker-modal-container" onclick="event.target === this && closeStickerGroupModal()">
     <div class="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl relative flex flex-col sticker-modal-content" onclick="event.stopPropagation()">
         <!-- ヘッダー -->
-        <div id="sticker-group-header" class="bg-sky-500 px-3 py-2 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0">
+        <div id="sticker-group-header" class="px-3 py-2 sm:px-6 sm:py-4" style="background:#0ea5e9 flex items-center justify-between flex-shrink-0">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <div id="sticker-group-icon" class="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-layer-group text-white text-sm sm:text-base"></i>
