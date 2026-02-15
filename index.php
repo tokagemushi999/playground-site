@@ -837,7 +837,7 @@ $collectionsJson = json_encode($collections, JSON_UNESCAPED_UNICODE);
                     <h2 class="font-code text-6xl md:text-8xl text-lab-green mb-6 tracking-widest">THE LAB</h2>
                     <p class="font-code text-lab-green/60 text-sm md:text-base tracking-wider">実験的なツール・デモを公開しています</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="lab-grid"></div>
+                <div class="grid grid-cols-1 gap-6" id="lab-grid"></div>
             </section>
         </div>
 
@@ -1198,18 +1198,19 @@ $collectionsJson = json_encode($collections, JSON_UNESCAPED_UNICODE);
             const lGrid = document.getElementById('lab-grid');
             if(lGrid) {
                 const defaultTools = [
-                    { id: 'manga-viewer', name: "Manga Viewer", description: "縦スクロール・見開き対応のWebマンガビューア。ブラックジャックによろしく第1巻のデモ付き。", icon: "fas fa-book-open", tool_type: 'manga-viewer', url: '/lab/manga-viewer/' },
-                    { id: '3d-mannequin', name: "3D Pose Mannequin (Beta)", description: "Webで動くデッサン人形。", icon: "fas fa-cube", tool_type: '3d-mannequin' },
-                    { id: 'color-gen', name: "Cyber Palette Gen", description: "ランダムに配色を生成。", icon: "fas fa-palette", tool_type: 'color-gen' },
-                    { id: 'timer', name: "Focus Timer", description: "作業用タイマー。", icon: "fas fa-hourglass-half", tool_type: 'timer' }
+                    { id: 'manga-viewer', name: "Manga Viewer", description: "ゼロ依存・軽量なWeb漫画ビューアー。見開き表示、スワイプ、ピンチズーム対応。バニラJS+CSSのみ。", icon: "fas fa-book-open", url: '/article/manga-viewer', tags: ['OSS', 'MIT License'] },
                 ];
                 const tools = labTools.length > 0 ? labTools : defaultTools;
                 lGrid.innerHTML = tools.map((t) => `
-                    <div class="bg-lab-bg border border-lab-green p-6 cursor-pointer hover:bg-lab-green/10 transition-colors group" onclick="${t.url ? `window.open('${t.url}','_blank')` : `openLabTool('${t.tool_type || t.id}')`}">
-                        <div class="text-4xl text-lab-green mb-4"><i class="${t.icon || 'fas fa-flask'}"></i></div>
-                        <h3 class="font-code text-xl text-white mb-2">> ${t.name}_</h3>
-                        <p class="font-code text-gray-400 text-sm">${t.description}</p>
-                    </div>`).join('');
+                    <a href="${t.url || '#'}" class="flex items-center gap-6 bg-lab-bg border border-lab-green/40 p-6 md:p-8 hover:bg-lab-green/10 transition-colors group rounded-lg no-underline" style="max-width:700px;margin:0 auto;">
+                        <div class="text-5xl text-lab-green flex-shrink-0"><i class="${t.icon || 'fas fa-flask'}"></i></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">${(t.tags||[]).map(tag => `<span class="text-xs font-bold px-2 py-0.5 rounded bg-lab-green/20 text-lab-green">${tag}</span>`).join('')}</div>
+                            <h3 class="font-code text-xl text-white mb-1">${t.name}</h3>
+                            <p class="font-code text-gray-400 text-sm">${t.description}</p>
+                        </div>
+                        <div class="text-lab-green/60 text-xl flex-shrink-0"><i class="fas fa-arrow-right"></i></div>
+                    </a>`).join('');
             }
             renderArticles();
             renderHomeArticles();
