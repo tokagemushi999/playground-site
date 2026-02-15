@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manga Viewer — Web漫画ビューアー</title>
+  <title>Manga Viewer — Web漫画ビューアー | tokagemushi.jp</title>
   <meta name="description" content="ゼロ依存・軽量なWeb漫画ビューアー。見開き表示、スワイプ操作、ピンチズーム対応。ESモジュール / npm で簡単導入。">
-  <!-- OGP -->
   <meta property="og:title" content="Manga Viewer — Web漫画ビューアー">
   <meta property="og:description" content="ゼロ依存・軽量なWeb漫画ビューアー。見開き表示、スワイプ操作、ピンチズーム対応。">
   <meta property="og:type" content="website">
@@ -16,16 +15,16 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #0a0a0f;
-      --surface: #14141f;
-      --surface2: #1c1c2e;
-      --border: #2a2a3e;
-      --text: #e8e8f0;
-      --text-dim: #8888a0;
-      --accent: #6c5ce7;
-      --accent-glow: #7c6cf7;
-      --accent2: #00cec9;
-      --radius: 12px;
+      --bg: #111118;
+      --surface: #1a1a24;
+      --surface2: #222233;
+      --border: #2e2e44;
+      --text: #eaeaf2;
+      --text-dim: #9090a8;
+      --accent: #7c6cf7;
+      --accent2: #00d2c6;
+      --radius: 10px;
+      --max-w: 780px;
     }
 
     html { scroll-behavior: smooth; }
@@ -34,481 +33,477 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.7;
+      line-height: 1.8;
       -webkit-font-smoothing: antialiased;
     }
 
-    a { color: var(--accent-glow); text-decoration: none; }
+    a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; }
+    code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.88em; }
+    img { max-width: 100%; }
 
-    /* ===== Hero ===== */
-    .hero {
-      min-height: 80vh;
+    /* ===== Navbar ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(17,17,24,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.7rem 2rem;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .navbar-links a { color: var(--text-dim); }
+    .navbar-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ===== Article Container ===== */
+    .article {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    /* ===== Hero / Header ===== */
+    .article-header {
       text-align: center;
-      padding: 4rem 2rem;
-      position: relative;
-      overflow: hidden;
+      padding: 3rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(ellipse at 60% 40%, rgba(108,92,231,0.08) 0%, transparent 60%),
-                  radial-gradient(ellipse at 30% 70%, rgba(0,206,201,0.05) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .hero-badge {
+    .article-header .tag {
       display: inline-block;
       background: var(--surface2);
       border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.8rem;
       border-radius: 999px;
-      padding: 0.4rem 1.2rem;
-      font-size: 0.85rem;
-      color: var(--accent-glow);
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.05em;
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.04em;
     }
 
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
+    .article-header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
-      margin-bottom: 1rem;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.01em;
     }
 
-    .hero h1 span {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-size: 1.15rem;
+    .article-header .lead {
+      font-size: 1.1rem;
       color: var(--text-dim);
-      max-width: 600px;
-      margin-bottom: 2.5rem;
+      max-width: 550px;
+      margin: 0 auto 2rem;
     }
 
-    .hero-buttons {
+    /* ===== CTA Buttons ===== */
+    .cta-group {
       display: flex;
       gap: 1rem;
-      flex-wrap: wrap;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.85rem 2rem;
-      border-radius: 999px;
-      font-size: 1rem;
-      font-weight: 600;
+      padding: 0.9rem 2.2rem;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
       border: none;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.12s, box-shadow 0.12s;
       text-decoration: none !important;
+      white-space: nowrap;
     }
 
     .btn:hover { transform: translateY(-2px); }
 
-    .btn-primary {
+    .btn-demo {
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       color: #fff;
-      box-shadow: 0 4px 20px rgba(108,92,231,0.3);
+      box-shadow: 0 4px 24px rgba(124,108,247,0.35);
+      font-size: 1.1rem;
+      padding: 1rem 2.5rem;
     }
 
-    .btn-secondary {
-      background: var(--surface2);
+    .btn-demo:hover {
+      box-shadow: 0 6px 32px rgba(124,108,247,0.5);
+    }
+
+    .btn-github {
+      background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border);
+      font-size: 1.1rem;
+      padding: 1rem 2.5rem;
     }
 
-    /* ===== Section ===== */
-    section {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 4rem 2rem;
+    .btn-github:hover {
+      border-color: var(--text-dim);
     }
 
-    .section-title {
-      font-size: 1.8rem;
+    /* ===== Article Body ===== */
+    .article h2 {
+      font-size: 1.5rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
+      margin: 3rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
     }
 
-    .section-sub {
+    .article h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 2rem 0 0.6rem;
+    }
+
+    .article p {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .article p.dim {
       color: var(--text-dim);
-      margin-bottom: 2.5rem;
     }
 
-    /* ===== Features Grid ===== */
-    .features {
+    /* ===== Features List ===== */
+    .features-list {
+      list-style: none;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.2rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem 1.5rem;
+      margin: 1.2rem 0 2rem;
     }
 
-    .feature-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-
-    .feature-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
-
-    .feature-icon {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .feature-card h3 {
-      font-size: 1.05rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .feature-card p {
-      font-size: 0.9rem;
-      color: var(--text-dim);
+    .features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.95rem;
       line-height: 1.5;
     }
 
-    /* ===== Demo Section ===== */
-    .demo-section {
-      text-align: center;
-      padding: 4rem 2rem;
+    .features-list .icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
     }
 
-    .demo-box {
+    /* ===== Demo Callout ===== */
+    .demo-callout {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 3rem 2rem;
-      max-width: 700px;
-      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+      margin: 2rem 0;
     }
 
-    .demo-box p {
+    .demo-callout h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .demo-callout p {
       color: var(--text-dim);
-      margin-bottom: 1.5rem;
+      font-size: 0.92rem;
+      margin-bottom: 1.2rem;
     }
 
-    /* ===== Code ===== */
-    .code-tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 0;
-    }
-
-    .code-tab {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-bottom: none;
-      padding: 0.5rem 1.2rem;
-      font-size: 0.85rem;
+    .demo-callout small {
+      display: block;
+      margin-top: 0.8rem;
       color: var(--text-dim);
-      border-radius: var(--radius) var(--radius) 0 0;
-      cursor: default;
-      font-family: inherit;
+      font-size: 0.8rem;
     }
 
-    .code-tab.active {
-      background: var(--surface);
-      color: var(--text);
-    }
-
+    /* ===== Code Block ===== */
     pre {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 0 var(--radius) var(--radius) var(--radius);
-      padding: 1.5rem;
+      border-radius: var(--radius);
+      padding: 1.3rem 1.5rem;
       overflow-x: auto;
-      font-size: 0.88rem;
-      line-height: 1.6;
+      font-size: 0.85rem;
+      line-height: 1.65;
       color: var(--text);
-      margin-bottom: 1.5rem;
+      margin: 1rem 0 1.5rem;
     }
 
-    pre .comment { color: #5a5a7a; }
-    pre .keyword { color: #c792ea; }
-    pre .string { color: #c3e88d; }
-    pre .tag { color: #f07178; }
-    pre .attr { color: #ffcb6b; }
+    pre .c { color: #5a5a7a; }
+    pre .k { color: #c792ea; }
+    pre .s { color: #c3e88d; }
+    pre .t { color: #f07178; }
+    pre .a { color: #ffcb6b; }
+
+    code.inline {
+      background: var(--surface2);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      color: var(--accent);
+    }
 
     /* ===== Options Table ===== */
-    .options-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
+    .options-wrap {
+      overflow-x: auto;
+      margin: 1rem 0 1.5rem;
     }
 
-    .options-table th {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th {
       text-align: left;
-      padding: 0.8rem 1rem;
+      padding: 0.65rem 0.8rem;
       background: var(--surface2);
       border: 1px solid var(--border);
       color: var(--text-dim);
       font-weight: 600;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
     }
 
-    .options-table td {
-      padding: 0.7rem 1rem;
+    td {
+      padding: 0.55rem 0.8rem;
       border: 1px solid var(--border);
       vertical-align: top;
     }
 
-    .options-table td code {
-      background: var(--surface2);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.82rem;
-      color: var(--accent-glow);
+    td code.inline { font-size: 0.82rem; }
+
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* ===== Sticky CTA ===== */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(17,17,24,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      z-index: 100;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
     }
 
-    .options-table tr:hover td {
-      background: var(--surface);
+    .sticky-cta.visible { transform: translateY(0); }
+
+    .sticky-cta .btn {
+      padding: 0.65rem 1.5rem;
+      font-size: 0.92rem;
     }
 
     /* ===== Footer ===== */
     .site-footer {
       text-align: center;
-      padding: 3rem 2rem;
+      padding: 2.5rem 1.5rem 4rem;
       border-top: 1px solid var(--border);
       color: var(--text-dim);
       font-size: 0.85rem;
+      max-width: var(--max-w);
+      margin: 0 auto;
     }
 
-    .site-footer .footer-links {
+    .site-footer a { color: var(--text-dim); }
+    .site-footer a:hover { color: var(--text); }
+
+    .footer-links {
       display: flex;
       gap: 2rem;
       justify-content: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
       flex-wrap: wrap;
     }
 
     /* ===== Responsive ===== */
     @media (max-width: 640px) {
-      section { padding: 3rem 1.2rem; }
-      .hero { padding: 3rem 1.2rem; min-height: 70vh; }
-      .features { grid-template-columns: 1fr; }
-      .hero-buttons { flex-direction: column; align-items: center; }
-      .options-table { font-size: 0.8rem; }
-      .options-table td, .options-table th { padding: 0.5rem 0.6rem; }
+      .article { padding: 2rem 1.2rem 3rem; }
+      .article-header { padding: 2rem 0 2rem; }
+      .features-list { grid-template-columns: 1fr; }
+      .cta-group { flex-direction: column; align-items: center; }
+      .btn-demo, .btn-github { width: 100%; justify-content: center; }
+      .navbar { padding: 0.7rem 1.2rem; }
+      .navbar-links { gap: 1rem; }
+      .sticky-cta { flex-direction: column; align-items: stretch; }
+      .sticky-cta .btn { justify-content: center; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Hero -->
-  <header class="hero">
-    <div class="hero-badge">Open Source · MIT License</div>
-    <h1><span>Manga Viewer</span></h1>
-    <p class="hero-sub">
-      ゼロ依存・軽量なWeb漫画ビューアー。<br>
-      見開き表示、スワイプ、ピンチズーム — すべてバニラJS+CSSだけで。
-    </p>
-    <div class="hero-buttons">
-      <a href="demo/" class="btn btn-primary">📖 ライブデモを試す</a>
-      <a href="https://github.com/tokagemushi999/manga-viewer" class="btn btn-secondary" target="_blank" rel="noopener">GitHub</a>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="/lab/" class="navbar-brand">🧪 THE LAB</a>
+    <div class="navbar-links">
+      <a href="#features">特徴</a>
+      <a href="#usage">導入</a>
+      <a href="https://github.com/tokagemushi999/manga-viewer" target="_blank" rel="noopener">GitHub</a>
     </div>
-  </header>
+  </nav>
 
-  <!-- Features -->
-  <section>
-    <h2 class="section-title">特徴</h2>
-    <p class="section-sub">漫画・コミック閲覧に必要な機能をすべて備えたスタンドアロンビューアー</p>
-    <div class="features">
-      <div class="feature-card">
-        <div class="feature-icon">📖</div>
-        <h3>見開き表示</h3>
-        <p>RTL（右綴じ）/ LTR（左綴じ）対応。横画面で自動的に見開きモードに切り替わります。</p>
+  <!-- Article -->
+  <article class="article">
+
+    <!-- Header -->
+    <header class="article-header" id="top">
+      <span class="tag">Open Source · MIT License</span>
+      <h1>📖 Manga Viewer</h1>
+      <p class="lead">
+        外部ライブラリ不要・軽量なWeb漫画ビューアー。<br>
+        見開き表示、スワイプ、ピンチズーム — バニラJS+CSSだけで実現。
+      </p>
+      <div class="cta-group">
+        <a href="demo/" class="btn btn-demo">📖 試してみる</a>
+        <a href="https://github.com/tokagemushi999/manga-viewer" class="btn btn-github" target="_blank" rel="noopener">⭐ GitHubで見る</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <h3>スマホ完全対応</h3>
-        <p>スワイプ操作、ピンチズーム、ダブルタップズーム。ネイティブアプリのような操作感。</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3>ゼロ依存</h3>
-        <p>外部ライブラリ一切不要。バニラJS+CSSのみで動作。ビルドツールも不要です。</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>軽量</h3>
-        <p>JS+CSSで約50KB。高速な読み込みとスムーズな動作を実現。</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔖</div>
-        <h3>読書進捗自動保存</h3>
-        <p>localStorageに進捗を自動保存。再訪問時に「続きから読む」を提案します。</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🖥️</div>
-        <h3>フルスクリーン対応</h3>
-        <p>ネイティブFullscreen API + 疑似フルスクリーンフォールバック。</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎨</div>
-        <h3>カスタマイズ可能</h3>
-        <p>広告挿入、プレビュー制限、購入ボタン、AdSense統合など商用利用にも対応。</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📦</div>
-        <h3>ESモジュール対応</h3>
-        <p>ES Module importで簡単導入。npmパッケージとしても利用可能。</p>
-      </div>
+    </header>
+
+    <!-- What is this -->
+    <h2 id="features">特徴</h2>
+    <p>Manga Viewerは、Webブラウザ上で漫画・コミックを快適に読むためのスタンドアロンビューアーです。日本の漫画の読み方（右綴じ・見開き）に最適化しつつ、あらゆるコミック形式に対応できるよう設計しています。</p>
+
+    <ul class="features-list">
+      <li><span class="icon">📖</span><span><strong>見開き表示</strong> — RTL（右綴じ）/ LTR 対応。横画面で自動的に見開きモードに。</span></li>
+      <li><span class="icon">📱</span><span><strong>スマホ完全対応</strong> — スワイプ、ピンチズーム、ダブルタップ。ネイティブアプリのような操作感。</span></li>
+      <li><span class="icon">🎯</span><span><strong>ゼロ依存</strong> — 外部ライブラリ不要。バニラJS+CSSだけで動作。</span></li>
+      <li><span class="icon">⚡</span><span><strong>軽量 ~50KB</strong> — JS+CSSのみ。ビルドツール不要で即導入。</span></li>
+      <li><span class="icon">🔖</span><span><strong>読書進捗保存</strong> — localStorage で自動保存。「続きから読む」対応。</span></li>
+      <li><span class="icon">🖥️</span><span><strong>フルスクリーン</strong> — Fullscreen API + 疑似フルスクリーンフォールバック。</span></li>
+      <li><span class="icon">🎨</span><span><strong>カスタマイズ</strong> — 広告挿入、プレビュー制限、AdSense統合で商用利用可。</span></li>
+      <li><span class="icon">📦</span><span><strong>ESモジュール</strong> — import で簡単導入。npm パッケージ対応。</span></li>
+      <li><span class="icon">📜</span><span><strong>スクロールモード</strong> — 縦スクロール連続表示にも対応。</span></li>
+      <li><span class="icon">⌨️</span><span><strong>キーボード操作</strong> — 矢印キー、Space、Home/End、Esc。</span></li>
+    </ul>
+
+    <!-- Demo Callout -->
+    <div class="demo-callout">
+      <h3>🎮 ライブデモ</h3>
+      <p>「ブラックジャックによろしく」第1巻（全209ページ）で<br>実際の読書体験をお試しください。</p>
+      <a href="demo/" class="btn btn-demo">📖 試してみる</a>
+      <small>佐藤秀峰氏の<a href="https://densho810.com/free/" target="_blank" rel="noopener">二次利用フリー規約</a>に基づき使用しています</small>
     </div>
-  </section>
 
-  <!-- Live Demo -->
-  <section class="demo-section">
-    <div class="demo-box">
-      <h2 class="section-title" style="margin-bottom: 1rem;">ライブデモ</h2>
-      <p>「ブラックジャックによろしく」第1巻（全209ページ）で実際の読書体験をお試しください。<br>
-      <small style="color: var(--text-dim);">佐藤秀峰氏の<a href="https://densho810.com/free/" target="_blank" rel="noopener">二次利用フリー規約</a>に基づき使用</small></p>
-      <a href="demo/" class="btn btn-primary">📖 デモを開く</a>
-    </div>
-  </section>
+    <!-- Usage -->
+    <h2 id="usage">導入方法</h2>
+    <p>数行のコードですぐに使い始められます。HTMLファイルにCSSとJSを読み込み、コンテナ要素を指定するだけ。</p>
 
-  <!-- Getting Started -->
-  <section>
-    <h2 class="section-title">導入方法</h2>
-    <p class="section-sub">数行のコードですぐに使い始められます</p>
+    <h3>基本的な使い方</h3>
+    <pre><span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"manga-viewer.css"</span><span class="t">&gt;</span>
 
-    <div class="code-tabs"><span class="code-tab active">HTML</span></div>
-    <pre><span class="comment">&lt;!-- 1. CSSとJSを読み込み --&gt;</span>
-<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"manga-viewer.css"</span><span class="tag">&gt;</span>
+<span class="t">&lt;div</span> <span class="a">id</span>=<span class="s">"viewer"</span><span class="t">&gt;&lt;/div&gt;</span>
 
-<span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="string">"viewer"</span><span class="tag">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;script</span> <span class="a">type</span>=<span class="s">"module"</span><span class="t">&gt;</span>
+  <span class="k">import</span> MangaViewer <span class="k">from</span> <span class="s">'./manga-viewer.js'</span>;
 
-<span class="tag">&lt;script</span> <span class="attr">type</span>=<span class="string">"module"</span><span class="tag">&gt;</span>
-  <span class="keyword">import</span> MangaViewer <span class="keyword">from</span> <span class="string">'./manga-viewer.js'</span>;
-
-  <span class="keyword">const</span> viewer = <span class="keyword">new</span> MangaViewer({
-    container: <span class="string">'#viewer'</span>,
+  <span class="k">const</span> viewer = <span class="k">new</span> MangaViewer({
+    container: <span class="s">'#viewer'</span>,
     pages: [
-      <span class="string">'pages/001.jpg'</span>,
-      <span class="string">'pages/002.jpg'</span>,
-      <span class="string">'pages/003.jpg'</span>,
-      <span class="comment">// ...</span>
+      <span class="s">'pages/001.jpg'</span>,
+      <span class="s">'pages/002.jpg'</span>,
+      <span class="s">'pages/003.jpg'</span>,
     ],
-    direction: <span class="string">'rtl'</span>,
-    title: <span class="string">'My Manga'</span>,
+    direction: <span class="s">'rtl'</span>,         <span class="c">// 右綴じ（日本の漫画）</span>
+    firstPageSingle: <span class="k">true</span>,  <span class="c">// 表紙を単独表示</span>
+    title: <span class="s">'My Manga'</span>,
   });
-<span class="tag">&lt;/script&gt;</span></pre>
+<span class="t">&lt;/script&gt;</span></pre>
 
-    <div class="code-tabs"><span class="code-tab active">npm</span></div>
-    <pre><span class="comment"># Coming soon</span>
-npm install manga-viewer</pre>
-  </section>
+    <h3>npm（Coming Soon）</h3>
+    <pre>npm install manga-viewer</pre>
 
-  <!-- Options -->
-  <section>
-    <h2 class="section-title">主要オプション</h2>
-    <p class="section-sub">コンストラクタに渡す設定オブジェクトのプロパティ一覧</p>
-    <div style="overflow-x: auto;">
-      <table class="options-table">
+    <!-- Options -->
+    <h2 id="options">主要オプション</h2>
+    <p class="dim">コンストラクタに渡す設定オブジェクト。全オプションは <a href="https://github.com/tokagemushi999/manga-viewer#-api-reference" target="_blank" rel="noopener">GitHub README</a> を参照。</p>
+
+    <div class="options-wrap">
+      <table>
         <thead>
-          <tr>
-            <th>オプション</th>
-            <th>型</th>
-            <th>デフォルト</th>
-            <th>説明</th>
-          </tr>
+          <tr><th>オプション</th><th>型</th><th>デフォルト</th><th>説明</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td><code>container</code></td>
-            <td>string | Element</td>
-            <td><code>'#viewer'</code></td>
-            <td>ビューアーを配置するセレクタまたはDOM要素</td>
-          </tr>
-          <tr>
-            <td><code>pages</code></td>
-            <td>Array</td>
-            <td><code>[]</code></td>
-            <td>画像URLまたはページオブジェクトの配列</td>
-          </tr>
-          <tr>
-            <td><code>direction</code></td>
-            <td>string</td>
-            <td><code>'rtl'</code></td>
-            <td>読み方向（<code>'rtl'</code> / <code>'ltr'</code>）</td>
-          </tr>
-          <tr>
-            <td><code>firstPageSingle</code></td>
-            <td>boolean</td>
-            <td><code>true</code></td>
-            <td>見開きモードで1ページ目を単独表示</td>
-          </tr>
-          <tr>
-            <td><code>viewMode</code></td>
-            <td>string</td>
-            <td><code>'page'</code></td>
-            <td>表示モード（<code>'page'</code> / <code>'scroll'</code>）</td>
-          </tr>
-          <tr>
-            <td><code>title</code></td>
-            <td>string</td>
-            <td><code>''</code></td>
-            <td>ヘッダーに表示するタイトル</td>
-          </tr>
-          <tr>
-            <td><code>storageKey</code></td>
-            <td>string</td>
-            <td><code>'manga_progress'</code></td>
-            <td>読書進捗のlocalStorageキー</td>
-          </tr>
-          <tr>
-            <td><code>previewLimit</code></td>
-            <td>number | null</td>
-            <td><code>null</code></td>
-            <td>無料プレビューページ数</td>
-          </tr>
-          <tr>
-            <td><code>onPageChange</code></td>
-            <td>Function</td>
-            <td><code>null</code></td>
-            <td>ページ変更時コールバック</td>
-          </tr>
+          <tr><td><code class="inline">container</code></td><td>string | Element</td><td><code class="inline">'#viewer'</code></td><td>配置先セレクタまたはDOM要素</td></tr>
+          <tr><td><code class="inline">pages</code></td><td>Array</td><td><code class="inline">[]</code></td><td>画像URLまたはページオブジェクトの配列</td></tr>
+          <tr><td><code class="inline">direction</code></td><td>string</td><td><code class="inline">'rtl'</code></td><td>読み方向（<code class="inline">'rtl'</code> / <code class="inline">'ltr'</code>）</td></tr>
+          <tr><td><code class="inline">firstPageSingle</code></td><td>boolean</td><td><code class="inline">true</code></td><td>見開きモードで1ページ目を単独表示</td></tr>
+          <tr><td><code class="inline">viewMode</code></td><td>string</td><td><code class="inline">'page'</code></td><td><code class="inline">'page'</code>（ページめくり） / <code class="inline">'scroll'</code>（縦スクロール）</td></tr>
+          <tr><td><code class="inline">title</code></td><td>string</td><td><code class="inline">''</code></td><td>ヘッダーに表示するタイトル</td></tr>
+          <tr><td><code class="inline">storageKey</code></td><td>string</td><td><code class="inline">'manga_progress'</code></td><td>読書進捗のlocalStorageキー</td></tr>
+          <tr><td><code class="inline">previewLimit</code></td><td>number | null</td><td><code class="inline">null</code></td><td>無料プレビューページ数（制限なし: null）</td></tr>
+          <tr><td><code class="inline">purchaseUrl</code></td><td>string</td><td><code class="inline">''</code></td><td>プレビュー制限後の購入ボタンURL</td></tr>
+          <tr><td><code class="inline">onPageChange</code></td><td>Function</td><td><code class="inline">null</code></td><td>ページ変更時コールバック <code class="inline">(page, total) => {}</code></td></tr>
         </tbody>
       </table>
     </div>
-    <p style="margin-top: 1rem; color: var(--text-dim); font-size: 0.9rem;">
-      全オプションは <a href="https://github.com/tokagemushi999/manga-viewer#-api-reference" target="_blank" rel="noopener">GitHub README</a> を参照してください。
-    </p>
-  </section>
+
+    <!-- Links -->
+    <h2>リンク</h2>
+    <div class="cta-group" style="justify-content: flex-start; margin-top: 1.2rem;">
+      <a href="demo/" class="btn btn-demo">📖 試してみる</a>
+      <a href="https://github.com/tokagemushi999/manga-viewer" class="btn btn-github" target="_blank" rel="noopener">⭐ GitHubで見る</a>
+    </div>
+
+  </article>
 
   <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-links">
       <a href="https://github.com/tokagemushi999/manga-viewer" target="_blank" rel="noopener">GitHub</a>
-      <a href="demo/">ライブデモ</a>
-      <span>License: MIT</span>
+      <a href="demo/">デモ</a>
+      <a href="/lab/">THE LAB</a>
     </div>
-    <p>Created by <a href="https://github.com/tokagemushi999" target="_blank" rel="noopener">tokagemushi999</a></p>
+    <p>MIT License · Created by <a href="https://github.com/tokagemushi999" target="_blank" rel="noopener">tokagemushi999</a></p>
   </footer>
+
+  <!-- Sticky CTA (shows on scroll) -->
+  <div class="sticky-cta" id="stickyCta">
+    <a href="demo/" class="btn btn-demo">📖 試してみる</a>
+    <a href="https://github.com/tokagemushi999/manga-viewer" class="btn btn-github" target="_blank" rel="noopener">⭐ GitHub</a>
+  </div>
+
+  <script>
+    // Show sticky CTA after scrolling past the header
+    const header = document.querySelector('.article-header');
+    const sticky = document.getElementById('stickyCta');
+    if (header && sticky) {
+      const observer = new IntersectionObserver(([e]) => {
+        sticky.classList.toggle('visible', !e.isIntersecting);
+      }, { threshold: 0 });
+      observer.observe(header);
+    }
+  </script>
 
 </body>
 </html>
