@@ -832,12 +832,12 @@ $collectionsJson = json_encode($collections, JSON_UNESCAPED_UNICODE);
         </div>
 
         <div id="tab-lab" class="tab-content">
-            <section class="max-w-7xl mx-auto px-6 py-32">
-                <div class="text-center">
-                    <h2 class="font-code text-6xl md:text-8xl text-lab-green mb-6 tracking-widest animate-pulse">THE LAB</h2>
-                    <p class="font-code text-lab-green/60 text-2xl md:text-3xl tracking-wider mb-4">COMING SOON</p>
-                    <p class="font-code text-gray-600 text-sm tracking-wide">Something is brewing...</p>
+            <section class="max-w-7xl mx-auto px-6 py-12 md:py-20">
+                <div class="text-center mb-12">
+                    <h2 class="font-code text-6xl md:text-8xl text-lab-green mb-6 tracking-widest">THE LAB</h2>
+                    <p class="font-code text-lab-green/60 text-sm md:text-base tracking-wider">実験的なツール・デモを公開しています</p>
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="lab-grid"></div>
             </section>
         </div>
 
@@ -1048,7 +1048,7 @@ $collectionsJson = json_encode($collections, JSON_UNESCAPED_UNICODE);
         <div class="w-full h-full flex items-center justify-center">
             <div class="text-center">
                 <div class="text-lab-green font-code text-6xl mb-6 animate-pulse">&lt;/&gt;</div>
-                <h2 class="text-lab-green font-code text-3xl mb-4">COMING SOON</h2>
+                <h2 class="text-lab-green font-code text-3xl mb-4">UNDER CONSTRUCTION</h2>
                 <p class="text-lab-green/60 font-code text-sm">このツールは現在開発中です</p>
                 <p class="text-lab-green/40 font-code text-xs mt-2">// Stay tuned for updates</p>
             </div>
@@ -1198,13 +1198,14 @@ $collectionsJson = json_encode($collections, JSON_UNESCAPED_UNICODE);
             const lGrid = document.getElementById('lab-grid');
             if(lGrid) {
                 const defaultTools = [
+                    { id: 'manga-viewer', name: "Manga Viewer", description: "縦スクロール・見開き対応のWebマンガビューア。ブラックジャックによろしく第1巻のデモ付き。", icon: "fas fa-book-open", tool_type: 'manga-viewer', url: '/lab/manga-viewer/' },
                     { id: '3d-mannequin', name: "3D Pose Mannequin (Beta)", description: "Webで動くデッサン人形。", icon: "fas fa-cube", tool_type: '3d-mannequin' },
                     { id: 'color-gen', name: "Cyber Palette Gen", description: "ランダムに配色を生成。", icon: "fas fa-palette", tool_type: 'color-gen' },
                     { id: 'timer', name: "Focus Timer", description: "作業用タイマー。", icon: "fas fa-hourglass-half", tool_type: 'timer' }
                 ];
                 const tools = labTools.length > 0 ? labTools : defaultTools;
                 lGrid.innerHTML = tools.map((t) => `
-                    <div class="bg-lab-bg border border-lab-green p-6 cursor-pointer hover:bg-lab-green/10 transition-colors group" onclick="openLabTool('${t.tool_type || t.id}')">
+                    <div class="bg-lab-bg border border-lab-green p-6 cursor-pointer hover:bg-lab-green/10 transition-colors group" onclick="${t.url ? `window.open('${t.url}','_blank')` : `openLabTool('${t.tool_type || t.id}')`}">
                         <div class="text-4xl text-lab-green mb-4"><i class="${t.icon || 'fas fa-flask'}"></i></div>
                         <h3 class="font-code text-xl text-white mb-2">> ${t.name}_</h3>
                         <p class="font-code text-gray-400 text-sm">${t.description}</p>
